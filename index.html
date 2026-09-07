@@ -7,34 +7,54 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>The A90 Game — Mobile</title>
-<link rel="manifest" href="manifest.json">
+
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;font-family:Arial,Helvetica,sans-serif}
 body{touch-action:none;color:#fff}
+button{font:700 18px Arial;border:1px solid #777;background:#050505;color:#fff;padding:14px 18px;border-radius:4px}
+button:active{transform:scale(.97)}
 #app{position:fixed;inset:0;overflow:hidden;background:#000}
 .screen{position:absolute;inset:0;display:none;align-items:center;justify-content:center}
 .screen.active{display:flex}
+
+/* INTRO / MENU */
 #intro{background:#000;flex-direction:column}
 .credit{position:absolute;top:12%;width:100%;text-align:center;font-weight:700}
 .credit .by{font-size:clamp(18px,4vw,32px)}
 .credit .name{font-size:clamp(26px,6vw,48px)}
 .credit .ninety{font-size:clamp(80px,18vw,150px);line-height:.8}
-#menu{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);display:none;gap:12px;flex-direction:column;width:min(320px,72vw)}
-button{font:700 18px Arial;border:1px solid #777;background:#050505;color:#fff;padding:14px 18px;border-radius:4px}
-button:active{transform:scale(.97)}
+#menu{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);display:none;gap:10px;flex-direction:column;width:min(340px,76vw)}
 #menu button{border-color:#b00000;background:#050505}
-#warning{background:#000;z-index:30;padding:24px}
+.menuCurrencies{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-bottom:4px;
+}
+.currency{
+  border:1px solid #555;
+  background:#090909;
+  padding:7px 11px;
+  border-radius:4px;
+  font-size:14px;
+  font-weight:700;
+}
+
+/* GENERAL */
 .dialog{width:min(650px,92vw);background:#050505;border:1px solid #555;padding:20px;text-align:center}
 .dialog h1{margin:0 0 12px;color:red;font-size:clamp(26px,7vw,44px)}
 .dialog .icons{display:flex;justify-content:center;gap:14px;margin-bottom:12px}
 .dialog img{width:76px;height:76px;object-fit:contain}
 .dialog p{line-height:1.45;color:#ddd;font-size:15px}
-.dialog .actions{display:flex;gap:10px;justify-content:center;margin-top:18px}
+.actions{display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+
+/* GAME */
 #game{background:transparent}
-#face{position:absolute;width:24vmin;height:24vmin;max-width:250px;max-height:250px;object-fit:contain;display:none}
-#stopFace{position:absolute;width:22vmin;height:22vmin;max-width:215px;max-height:215px;object-fit:contain;display:none}
-#attackFace{position:absolute;width:55vmin;height:55vmin;max-width:720px;max-height:720px;object-fit:contain;display:none}
+#face,#stopFace,#attackFace{position:absolute;object-fit:contain;display:none}
+#face{width:24vmin;height:24vmin;max-width:250px;max-height:250px}
+#stopFace{width:22vmin;height:22vmin;max-width:215px;max-height:215px}
+#attackFace{width:420px;height:420px;max-width:80vw;max-height:80vw}
 #download{display:none;flex-direction:column;align-items:center;gap:10px;width:min(680px,72vw);font-weight:700}
 #bar{width:100%;height:38px;border:2px solid #ddd;background:#111;padding:4px}
 #fill{height:100%;width:0;background:#fff}
@@ -50,431 +70,349 @@ button:active{transform:scale(.97)}
 .goldbox{background:#e7bd00;color:#000;flex:0 0 37%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700}
 .goldbox img{width:42px;height:42px;object-fit:contain}
 .timebox{background:#9a0000;flex:1;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700}
-.glitch{padding:8px;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:700;font-size:12px}
-.stripe{position:absolute;height:5px}
-.blackmsg{height:100%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;text-align:center;padding:8px}
-.crucifix{width:100%;height:100%;object-fit:contain}
 .coin{position:absolute;width:64px;height:64px;object-fit:contain;z-index:5;animation:coinpop .15s;cursor:pointer;pointer-events:auto}
 @keyframes coinpop{from{transform:scale(.4)}to{transform:scale(1)}}
-.stormpopup{z-index:2;pointer-events:none;animation:stormShake var(--shakeDur, .42s) ease-in-out infinite;animation-delay:var(--shakeDelay, 0s);will-change:transform}
-@keyframes stormShake{0%,100%{transform:translate(0,0)}12%{transform:translate(-2px,1px)}25%{transform:translate(1px,-2px)}37%{transform:translate(2px,1px)}50%{transform:translate(-1px,-1px)}62%{transform:translate(-2px,2px)}75%{transform:translate(1px,1px)}87%{transform:translate(2px,-1px)}}
+.stormpopup{z-index:2;pointer-events:none;animation:stormShake var(--shakeDur,.42s) ease-in-out infinite}
+@keyframes stormShake{0%,100%{transform:translate(0,0)}25%{transform:translate(-2px,1px)}50%{transform:translate(2px,-2px)}75%{transform:translate(-1px,2px)}}
+
+/* BSOD */
 #bsod{background:#005bb1;z-index:20;flex-direction:column;align-items:flex-start;justify-content:flex-start;padding:8vh 10vw}
 #bsod .sad{font-size:clamp(70px,18vw,150px);font-weight:300}
 #bsod .msg{font-size:clamp(18px,4vw,28px);max-width:900px;line-height:1.35}
-#bsod .percent{font-size:20px;margin-top:30px}
+#bsodPercent{font-size:20px;margin-top:30px}
 #bsodbar{width:min(720px,80vw);height:22px;border:1px solid #fff;margin-top:12px}
 #bsodfill{height:100%;width:0;background:#fff}
-#bsod .code{margin-top:20px;font-size:14px}
-#mini{background:#0c0c0c;z-index:25;display:none}
+
+/* MINI GAME */
+#mini{background:#0c0c0c;z-index:25}
 #mini h2{position:absolute;top:25px;left:0;width:100%;text-align:center;font-size:28px}
-#mini .timer{position:absolute;top:75px;width:100%;text-align:center;font-size:18px}
-#mini .status{position:absolute;bottom:25px;width:100%;text-align:center;color:#bbb}
+#miniTimer{position:absolute;top:75px;width:100%;text-align:center;font-size:18px}
+#miniStatus{position:absolute;bottom:25px;width:100%;text-align:center;color:#bbb}
 .node{position:absolute;width:58px;height:58px;padding:0;border-radius:50%;background:#121212;border:2px solid #888;font-size:18px}
-#end{background:#3bc700;z-index:28;display:none}
-.thanks{width:360px;height:226px;max-width:85vw;max-height:54vw;background:#000;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
-.thanks img{width:100%;height:100%;object-fit:contain;display:block}
-#toast{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);background:#111;border:1px solid #555;padding:8px 12px;border-radius:4px;display:none;z-index:100}
-#safeExit{position:absolute;right:12px;top:12px;z-index:100;background:#111;border-color:#666;font-size:13px;padding:8px 10px}
+
+/* THANK YOU */
+#end{background:#3bc700;z-index:28}
+.thanks{width:360px;height:226px;max-width:85vw;max-height:54vw;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.thanks img{width:100%;height:100%;object-fit:contain}
+
+/* SHOP */
+#shop,#settingsScreen,#quests,#gallery{
+  background:#050505;
+  z-index:40;
+  padding:18px;
+  flex-direction:column;
+  justify-content:flex-start;
+  overflow:auto;
+}
+.panel{
+  width:min(760px,94vw);
+  margin:auto;
+  border:1px solid #444;
+  background:#090909;
+  padding:16px;
+}
+.panel h1{margin:0 0 12px;color:#d00000;text-align:center}
+.shopTabs{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:12px}
+.shopTabs button{font-size:14px;padding:9px 12px}
+.shopGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.shopItem{border:1px solid #444;background:#050505;padding:10px;text-align:center}
+.shopItem h3{margin:4px 0 7px}
+.shopItem p{color:#bbb;font-size:13px;min-height:35px}
+.shopItem button{font-size:14px;padding:9px 10px}
+.owned{color:#45e36b;font-weight:700}
+.locked{color:#888}
+.backBtn{margin-top:12px;width:100%}
+.quest{border:1px solid #444;padding:12px;margin:8px 0;background:#070707}
+.quest h3{margin:0 0 5px}
+.quest p{margin:5px 0;color:#bbb;font-size:13px}
+.quest button{font-size:14px;padding:8px 12px}
+
+/* SETTINGS */
+.sliderRow{margin:18px 0}
+.sliderRow label{display:flex;justify-content:space-between;margin-bottom:8px}
+.sliderRow input{width:100%}
+
+/* BADGE */
+#badge{
+  position:fixed;
+  left:12px;
+  top:12px;
+  z-index:200;
+  display:none;
+  align-items:center;
+  gap:10px;
+  background:#123d91;
+  border:2px solid #4c8cff;
+  padding:9px 12px;
+  border-radius:5px;
+  box-shadow:0 0 18px #2770ff;
+  animation:badgeIn .6s ease-out;
+}
+#badgeIcon{
+  width:42px;
+  height:42px;
+  border-radius:4px;
+  background:#174da8;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:25px;
+}
+#badge b{font-size:14px}
+#badge small{display:block;color:#d9e5ff;margin-top:2px}
+@keyframes badgeIn{from{transform:translateX(-120%)}to{transform:translateX(0)}}
+
+#toast{
+  position:absolute;
+  left:50%;
+  bottom:18px;
+  transform:translateX(-50%);
+  background:#111;
+  border:1px solid #555;
+  padding:8px 12px;
+  border-radius:4px;
+  display:none;
+  z-index:300;
+  white-space:nowrap;
+}
+#safeExit{
+  position:absolute;
+  right:12px;
+  top:12px;
+  z-index:100;
+  background:#111;
+  border-color:#666;
+  font-size:13px;
+  padding:8px 10px;
+}
 </style>
 </head>
+
 <body>
 <div id="app">
-  <div id="intro" class="screen active">
-    <div class="credit" id="credits"></div>
-    <div id="menu">
-      <button id="play">PLAY</button>
-      <button id="settings">SETTINGS</button>
-      <button id="exit">EXIT</button>
+
+<div id="intro" class="screen active">
+  <div class="credit" id="credits">
+    <div class="by">By</div>
+    <div class="name" style="display:none">Majed</div>
+    <div class="ninety" style="display:none">90</div>
+  </div>
+
+  <div id="menu">
+    <div class="menuCurrencies">
+      <div class="currency">💰 RP: <span id="rpDisplay">0</span></div>
+      <div class="currency">✨ Stardust: <span id="stardustDisplay">0</span></div>
+    </div>
+
+    <button id="play">PLAY</button>
+    <button id="shopBtn">SHOP</button>
+    <button id="questsBtn">QUESTS</button>
+    <button id="settings">SETTINGS</button>
+    <button id="exit">EXIT</button>
+  </div>
+</div>
+
+<div id="warning" class="screen">
+  <div class="dialog">
+    <div class="icons">
+      <img src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/ransom_idle.png?v=2">
+      <img src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/stop.png?v=2">
+    </div>
+
+    <h1>WARNING</h1>
+
+    <p>
+      This mobile recreation is a visual game only.
+      It does <b>not</b> modify your files, lock your device,
+      infect phones, change your wallpaper, or interfere with other apps.
+    </p>
+
+    <div class="actions">
+      <button id="understand">I UNDERSTAND</button>
+      <button id="back">GO BACK</button>
     </div>
   </div>
+</div>
 
-  <div id="warning" class="screen">
-    <div class="dialog">
-      <div class="icons"><img src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/ransom_idle.png?v=2"><img src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/stop.png?v=2"></div>
-      <h1>WARNING</h1>
-      <p>This mobile recreation is a visual game only. It does <b>not</b> modify your files, lock your device, infect phones, change your wallpaper, or interfere with other apps.</p>
-      <div class="actions">
-        <button id="understand">I UNDERSTAND</button>
-        <button id="back">GO BACK</button>
-      </div>
+<div id="game" class="screen">
+
+  <img id="face"
+       src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/ransom_idle.png?v=2">
+
+  <img id="stopFace"
+       src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/stop.png?v=2">
+
+  <img id="attackFace"
+       src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/ransom_attack.png?v=2">
+
+  <div id="download">
+    <div>DOWNLOADING RANSOM...</div>
+    <div id="bar">
+      <div id="fill"></div>
     </div>
+    <div id="pct">0%</div>
   </div>
 
-  <div id="game" class="screen">
-    <img id="face" src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/ransom_idle.png?v=2">
-    <img id="stopFace" src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/stop.png?v=2">
-    <img id="attackFace" src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/ransom_attack.png?v=2">
-    <div id="download">
-      <div>DOWNLOADING RANSOM...</div>
-      <div id="bar"><div id="fill"></div></div>
-      <div id="pct">0%</div>
-    </div>
-    <div id="popupLayer"></div>
-  </div>
-
-  <div id="bsod" class="screen">
-    <div class="sad" id="bsodface">:(</div>
-    <div class="msg" id="bsodmsg">Your device ran into a Ransom error and needs to recover. We're collecting some error info, and then this screen will close.</div>
-    <div class="percent" id="bsodpct">0% complete</div>
-    <div id="bsodbar"><div id="bsodfill"></div></div>
-    <div class="code" id="bsodcode">Stop code: RANSOM_PAYMENT_TIMEOUT</div>
-  </div>
-
-  <div id="mini" class="screen">
-    <h2>SIGNAL RECOVERY</h2>
-    <div class="timer" id="minitime">15.0 seconds</div>
-    <div class="status" id="ministatus">Select nodes 1-6 in order</div>
-    <div id="nodes"></div>
-  </div>
-
-  <div id="end" class="screen">
-    <div class="thanks"><img src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/Thank_you.png?v=2" alt="THANK YOU"></div>
-  </div>
+  <div id="popupLayer"></div>
 
   <button id="safeExit">EXIT</button>
-  <div id="toast"></div>
 </div>
 
-<script>
-const $=id=>document.getElementById(id);
-const screens={intro:$('intro'),warning:$('warning'),game:$('game'),bsod:$('bsod'),mini:$('mini'),end:$('end')};
-const assets='https://scriptersketch.github.io/A-90-Game-Mobile-Port/';
-let audio=null, stage=0, stageStart=0, raf=0, activity=false, paid=false;
-let balance=500, remaining=125;
-let stormPopups=[], stormCycleStart=0, stormRemovalAt=0, riserPlayed=false;
-let nodes=[], nextNode=1, miniDeadline=0;
+<div id="bsod" class="screen">
+  <div class="sad">:(</div>
 
-function show(s){Object.values(screens).forEach(x=>x.classList.remove('active'));s.classList.add('active')}
-function playAudio(name, loop=false){
-  try{ if(audio){audio.pause();audio.currentTime=0} audio=new Audio(assets+name+'?v=2');audio.loop=loop;audio.volume=1;audio.play().catch(()=>toast('Tap PLAY again if audio is blocked by Safari.')) }catch{}
-}
-function stopAudio(){if(audio){audio.pause();audio.currentTime=0}}
-function toast(t){$('toast').textContent=t;$('toast').style.display='block';clearTimeout(window.tt);window.tt=setTimeout(()=>$('toast').style.display='none',1600)}
-
-function intro(){
-  $('credits').innerHTML='';
-  setTimeout(()=>$('credits').innerHTML='<div class="by">By</div>',3700);
-  setTimeout(()=>$('credits').innerHTML='<div class="name">Majed</div>',7400);
-  setTimeout(()=>$('credits').innerHTML='<div class="ninety">90</div>',10400);
-  setTimeout(()=>{$('credits').innerHTML='';$('menu').style.display='flex'},13900);
-  playAudio('intro_theme.mp3',false);
-}
-$('play').onclick=()=>show(screens.warning);
-$('back').onclick=()=>{show(screens.intro);$('menu').style.display='flex'};
-$('understand').onclick=()=>startGame();
-$('settings').onclick=()=>toast('Mobile build: settings are simplified for touch controls.');
-$('exit').onclick=()=>toast('You can close this Safari tab or Home Screen app.');
-$('safeExit').onclick=()=>{stopAudio();cancelAnimationFrame(raf);show(screens.intro);$('menu').style.display='flex';resetVisuals()};
-
-function resetVisuals(){
-  $('face').style.display='none';$('stopFace').style.display='none';$('attackFace').style.display='none';
-  $('download').style.display='none';$('popupLayer').style.display='none';$('bsod').classList.remove('active');
-  $('mini').classList.remove('active');$('end').classList.remove('active');$('game').classList.remove('active');
-  $('popupLayer').innerHTML='';document.querySelectorAll('.coin').forEach(x=>x.remove());stormPopups=[];stormCycleStart=0;stormRemovalAt=0;
-}
-
-function startGame(){
-  show(screens.game);$('menu').style.display='none';resetVisuals();show(screens.game);
-  stage=1;stageStart=performance.now();activity=false;paid=false;balance=500;remaining=90;riserPlayed=false;stormPopups=[];stormCycleStart=0;stormRemovalAt=0;
-  playAudio('ransom_appear.mp3');placeFace();
-  listenActivity();tick();
-}
-function placeFace(){
-  const f=$('face');f.style.display='block';f.style.width='24vmin';f.style.height='24vmin';
-  f.style.left=(8+Math.random()*72)+'vw';f.style.top=(8+Math.random()*72)+'vh';
-}
-function centerStop(){
-  const f=$('stopFace');f.style.display='block';f.style.left='50%';f.style.top='50%';f.style.transform='translate(-50%,-50%)';
-}
-function listenActivity(){
-  const mark=()=>activity=true;
-  window.addEventListener('pointerdown',mark,{once:false});
-  window.addEventListener('pointermove',mark,{once:false});
-  window.addEventListener('touchstart',mark,{once:false,passive:true});
-}
-function tick(){
-  const now=performance.now(), e=now-stageStart;
-  if(stage===1 && e>=300){placeFace();stage=2;stageStart=now}
-  else if(stage===2 && e>=300){$('face').style.display='none';centerStop();stage=3;stageStart=now;activity=false}
-  else if(stage===3 && e>=200){
-    if(!activity){resetToMenu('You stayed still. A90 left.')} else {
-      $('stopFace').style.display='none';$('attackFace').style.display='block';$('attackFace').style.left='50%';$('attackFace').style.top='50%';$('attackFace').style.transform='translate(-50%,-50%)';
-      $('attackFace').style.width='55vmin';$('attackFace').style.height='55vmin';playAudio('ransom_attack_audio.mp3');
-      stage=4;stageStart=now;
-    }
-  } else if(stage===4){
-    const p=Math.min(1,e/900), size=55+27*p;
-    $('attackFace').style.width=size+'vmin';$('attackFace').style.height=size+'vmin';
-    if(e>=900){$('attackFace').style.display='none';$('download').style.display='flex';stage=5;stageStart=now}
-  } else if(stage===5){
-    const p=Math.min(1,e/1672), eased=1-Math.pow(1-p,2);
-    $('fill').style.width=(eased*100)+'%';$('pct').textContent=Math.floor(eased*100)+'%';
-    if(e>=1672){$('download').style.display='none';$('game').style.background='#fff';stage=6;stageStart=now}
-  } else if(stage===6 && e>=100){
-    $('game').style.background='transparent';startPopupStorm();stage=7;stageStart=now;
-  } else if(stage===7){
-    updatePopupStage(now,e);
-  } else if(stage===8){
-    if(e>=850){showThanks();stage=9;stageStart=now}
-  } else if(stage===9 && e>=4154){resetToMenu();return}
-  else if(stage===10 && e>=5200){startBsod();return}
-  raf=requestAnimationFrame(tick);
-}
-function startPopupStorm(){
-  $('popupLayer').style.display='block';$('popupLayer').innerHTML='';
-  balance=500;paid=false;
-  const p=document.createElement('div');p.className='popup mainpopup';p.style.left=(10+Math.random()*70)+'vw';p.style.top=(10+Math.random()*65)+'vh';p.style.zIndex='10';
-  p.innerHTML='<div class="mainHead"><img src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/ransom_idle.png?v=2"><b>YOUR ITEMS<br>HAVE BEEN<br>ENCRYPTED</b></div><div class="mainBody">IF YOU DO NOT PAY THIS RANSOM<br>BEFORE THE TIMER ENDS, YOUR ITEMS<br>WILL BE UNRECOVERABLE BY ANY MEANS.</div><div class="payrow"><div class="goldbox"><span id="goldnum">500</span><img src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/gold.png?v=2"></div><div class="timebox" id="timer">TIME: 01:30</div></div>';
-  p.onclick=(ev)=>ev.stopPropagation();
-  $('popupLayer').appendChild(p);
-  playAudio('ransom_theme.mp3',true);
-  spawnCoins();
-  startDecorativeStorm();
-}
-function spawnCoins(){
-  for(let i=0;i<18;i++){
-    const c=document.createElement('img');c.className='coin';c.src=assets+(['gold.png','coin_blue.png','coin_red.png'][i%3])+'?v=2';
-    c.style.left=(3+Math.random()*91)+'vw';c.style.top=(7+Math.random()*84)+'vh';
-    const value=i%3===0?50:25;
-    c.dataset.value=value;
-    c.onclick=(ev)=>{
-      ev.stopPropagation();
-      const v=+c.dataset.value;
-      balance=Math.max(0,balance-v);
-      $('goldnum').textContent=balance;
-      c.remove();
-      toast('-'+v+' ransom');
-      if(balance<=0){balance=0;$('goldnum').textContent='0';paid=true;}
-    };
-    $('popupLayer').appendChild(c);
-  }
-}
-function collectCoin(){}
-
-const stormVariants=[
-  ['YOUR GOLD ARE BELONG TO US','black'],['SIGNAL ERROR','glitch'],['DATA CORRUPTED','glitch'],
-  ['PAYMENT ERROR','black'],['CONNECTION LOST','glitch'],['SYSTEM FAILURE','black'],
-  ['ACCESS DENIED','glitch'],['RANSOM DETECTED','black'],['RECOVERY FAILED','glitch'],
-  ['UNRECOVERABLE','black'],['ENCRYPTION ERROR','glitch'],['SIGNAL LOST','glitch'],['','image']
-];
-function pickStormVariant(){return stormVariants[Math.floor(Math.random()*stormVariants.length)]}
-function startDecorativeStorm(){
-  stormPopups.forEach(x=>x.remove());stormPopups=[];stormCycleStart=performance.now();stormRemovalAt=0;
-  for(let i=0;i<5;i++)createStormPopup();
-}
-function createStormPopup(){
-  const [title,mode]=pickStormVariant();
-  const p=makeGlitch(title,mode,true);
-  if(p)stormPopups.push(p);
-}
-function updateDecorativeStorm(now){
-  if(stormRemovalAt===0 && now-stormCycleStart>=3000){
-    const copy=stormPopups.slice();
-    for(let i=copy.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[copy[i],copy[j]]=[copy[j],copy[i]]}
-    copy.slice(0,2).forEach(p=>{p.remove();const i=stormPopups.indexOf(p);if(i>=0)stormPopups.splice(i,1)});
-    stormRemovalAt=now;
-  }
-  if(stormRemovalAt && now-stormRemovalAt>=2000){
-    createStormPopup();createStormPopup();stormCycleStart=now;stormRemovalAt=0;
-  }
-}
-function updatePopupStage(now,e){
-  remaining=Math.max(0,90-Math.ceil(e/1000));
-  const sec=String(remaining%60).padStart(2,'0'), min=String(Math.floor(remaining/60)).padStart(2,'0');
-  const t=$('timer');if(t)t.textContent='TIME: '+min+':'+sec;
-  if(!riserPlayed && remaining<=10 && remaining>0){riserPlayed=true;playAudio('ransom_attack_audio.mp3',false);}
-  updateDecorativeStorm(now);
-  if(paid){
-    document.querySelectorAll('.mainpopup,.coin,.stormpopup').forEach(x=>x.remove());
-    stormPopups=[];
-    showThanks();stage=9;stageStart=now;return;
-  }
-  if(e>=90000){startUnpaid();return}
-}
-function makeGlitch(title,mode,storm=false){
-  const p=document.createElement('div');p.className='popup glitch'+(storm?' stormpopup':'');
-  p.style.width=(230+Math.random()*100)+'px';p.style.height=(105+Math.random()*75)+'px';
-  p.style.left=(Math.random()*78)+'vw';p.style.top=(Math.random()*78)+'vh';
-  if(storm){
-    p.style.setProperty('--shakeDur',(0.34+Math.random()*0.28).toFixed(2)+'s');
-    p.style.setProperty('--shakeDelay',(-Math.random()*0.6).toFixed(2)+'s');
-  }
-  if(mode==='image')p.innerHTML='<img class="crucifix" src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/ransom_crucifix.png?v=2">';
-  else if(mode==='black')p.innerHTML='<div class="blackmsg">'+title+'<br><br>0x'+Math.floor(Math.random()*0xffffffff).toString(16).padStart(8,'0')+'</div>';
-  else {
-    for(let i=0;i<12;i++){const s=document.createElement('div');s.className='stripe';s.style.left=Math.random()*90+'%';s.style.top=Math.random()*95+'%';s.style.width=(10+Math.random()*65)+'%';s.style.background=['#b023ff','#14eb5f','#2378ff','#f51923','#fff','#050505'][i%6];p.appendChild(s)}
-    const t=document.createElement('div');t.textContent=title+'\n0x'+Math.floor(Math.random()*0xffffffff).toString(16);t.style.whiteSpace='pre-line';p.appendChild(t);
-  }
-  $('popupLayer').appendChild(p);
-  if(!storm)setTimeout(()=>p.remove(),380+Math.random()*380);
-  return p;
-}
-function startUnpaid(){
-  stopAudio();playAudio('ransom_attack_end.mp3');$('popupLayer').style.display='none';document.querySelectorAll('.coin').forEach(x=>x.remove());
-  $('game').style.background='rgb(205,0,0)';$('attackFace').style.display='block';$('attackFace').style.left='50%';$('attackFace').style.top='50%';$('attackFace').style.transform='translate(-50%,-50%)';$('attackFace').style.width='72vmin';$('attackFace').style.height='72vmin';
-  stage=10;stageStart=performance.now();
-}
-function startBsod(){
-  $('attackFace').style.display='none';show(screens.bsod);stage=11;stageStart=performance.now();$('bsodpct').textContent='0% complete';$('bsodfill').style.width='0';$('bsodface').textContent=':(';$('bsodmsg').textContent="Your device ran into a Ransom error and needs to recover. We're collecting some error info, and then this screen will close.";$('bsodcode').textContent='Stop code: RANSOM_PAYMENT_TIMEOUT';playAudio('ransom_attack_end.mp3',true);
-  bsodTick();
-}
-function bsodTick(){
-  const now=performance.now(),e=now-stageStart,p=Math.min(1,e/3200),ease=1-Math.pow(1-p,1.65),pct=Math.floor(ease*100);
-  $('bsodpct').textContent=pct+'% complete';$('bsodfill').style.width=pct+'%';
-  if(pct>=90){$('bsod').style.background=(Math.floor(now/80)%2?'rgb(160,0,0)':'rgb(40,0,0)');$('bsodface').textContent=':)';$('bsodmsg').textContent='Ransom has taken control.';$('bsodcode').textContent='Stop code: A90_SIGNAL_LOCK'}
-  if(e>=3200){stopAudio();show(screens.mini);startMini();return}
-  requestAnimationFrame(bsodTick);
-}
-function startMini(){
-  nextNode=1;miniDeadline=performance.now()+15000;nodes=[];$('nodes').innerHTML='';$('ministatus').textContent='Select nodes 1-6 in order';
-  for(let i=1;i<=6;i++){const b=document.createElement('button');b.className='node';b.textContent=i;b.dataset.n=i;b.onclick=()=>nodeClick(b);$('nodes').appendChild(b);nodes.push(b)}
-  moveNodes();setTimeout(moveNodes,1150);setTimeout(moveNodes,2300);setTimeout(moveNodes,3450);setTimeout(moveNodes,4600);miniTick();
-}
-function moveNodes(){
-  nodes.filter(x=>x.style.display!=='none').forEach(b=>{b.style.left=(8+Math.random()*80)+'vw';b.style.top=(15+Math.random()*70)+'vh'})
-}
-function nodeClick(b){
-  const n=+b.dataset.n;
-  if(n===nextNode){b.style.display='none';nextNode++;$('ministatus').textContent=n===6?'SIGNAL RESTORED':'Node '+n+' accepted';if(nextNode===7){playAudio('ransom_thank_you.mp3');setTimeout(()=>resetToMenu(),2200)}}
-  else $('ministatus').textContent='Next node: '+nextNode;
-}
-function miniTick(){
-  const left=Math.max(0,miniDeadline-performance.now());$('minitime').textContent=(left/1000).toFixed(1)+' seconds';
-  if(left<=0){$('ministatus').textContent='RECOVERY FAILED';playAudio('ransom_attack_end.mp3');setTimeout(()=>resetToMenu(),1824);return}
-  requestAnimationFrame(miniTick);
-}
-function showThanks(){stopAudio();playAudio('ransom_thank_you.mp3');show(screens.end)}
-function resetToMenu(msg=''){
-  cancelAnimationFrame(raf);stopAudio();resetVisuals();$('game').style.background='transparent';show(screens.intro);$('menu').style.display='flex';if(msg)toast(msg);
-}
-$('attackFace').addEventListener('click',()=>{});
-$('game').addEventListener('pointerdown',()=>{activity=true});
-$('game').addEventListener('pointermove',()=>{activity=true});
-setTimeout(intro,50);
-
-// The original has a 33ms update loop; keep the mobile version responsive at ~60fps.
-</script>
-</body>
-</html>
-<body>
-<div id="app">
-
-  <div id="intro" class="screen active">
-    <div class="credit">
-      <div class="by">By</div>
-      <div class="name">Majed</div>
-      <div class="ninety">90</div>
-    </div>
+  <div class="msg">
+    Your device ran into a Ransom error and needs to recover.
+    We're collecting some error info, and then this screen will close.
   </div>
 
-  <div id="menu" class="screen">
-    <button id="playBtn">PLAY</button>
-    <button id="settingsBtn">SETTINGS</button>
-    <button id="exitBtn">EXIT</button>
+  <div id="bsodPercent">0% complete</div>
+
+  <div id="bsodbar">
+    <div id="bsodfill"></div>
   </div>
+</div>
 
-  <div id="warning" class="screen">
-    <div class="dialog">
-      <h1>WARNING</h1>
+<div id="mini" class="screen">
+  <h2>SIGNAL RECOVERY</h2>
+  <div id="miniTimer">TIME: 15.0</div>
+  <div id="miniStatus">Select nodes 1-6 in order</div>
+</div>
 
-      <div class="icons">
-        <img src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/a90_app.ico?v=2">
-        <img src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/stop.png?v=2">
-      </div>
-
-      <p>
-        This game contains flashing images, sudden visual effects,
-        loud sounds, and simulated system-error effects.
-      </p>
-
-      <p>
-        Nothing in this mobile version modifies your device, files,
-        apps, USB devices, or operating system.
-      </p>
-
-      <div class="actions">
-        <button id="understandBtn">I UNDERSTAND</button>
-      </div>
-    </div>
+<div id="end" class="screen">
+  <div class="thanks">
+    <img src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/Thank_you.png?v=2">
   </div>
+</div>
 
-  <div id="game" class="screen">
-    <img id="face"
-      src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/ransom_idle.png?v=2">
+<div id="shop" class="screen">
+  <div class="panel">
 
-    <img id="stopFace"
-      src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/stop.png?v=2">
+    <h1>SHOP</h1>
 
-    <img id="attackFace"
-      src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/ransom_attack.png?v=2">
-
-    <div id="download">
-      <div>DOWNLOADING...</div>
-      <div id="bar">
-        <div id="fill"></div>
-      </div>
-      <div id="pct">0%</div>
+    <div style="text-align:center;margin-bottom:10px">
+      💰 <span id="shopRP">0</span> RP
+      &nbsp;&nbsp;
+      ✨ <span id="shopSD">0</span> Stardust
     </div>
 
-    <div id="popupLayer"></div>
+    <div class="shopTabs">
+      <button onclick="shopTab('items')">ITEMS</button>
+      <button onclick="shopTab('cosmetics')">COSMETICS</button>
+      <button onclick="shopTab('gallery')">GALLERY</button>
+    </div>
 
-    <button id="safeExit">EXIT</button>
+    <div id="shopContent"></div>
+
+    <button class="backBtn" onclick="goMenu()">BACK</button>
+
   </div>
+</div>
 
-  <div id="bsod" class="screen">
-    <div class="sad">:(</div>
+<div id="settingsScreen" class="screen">
+  <div class="panel">
 
-    <div class="msg">
-      Your PC ran into a problem and needs to restart.
-      We're just collecting some error info, and then we'll restart for you.
+    <h1>SETTINGS</h1>
+
+    <div class="sliderRow">
+      <label>
+        <span>MUSIC VOLUME</span>
+        <span id="musicValue">50%</span>
+      </label>
+
+      <input id="musicSlider"
+             type="range"
+             min="0"
+             max="100"
+             value="50">
     </div>
 
-    <div class="percent" id="bsodPercent">0% complete</div>
+    <div class="sliderRow">
+      <label>
+        <span>SFX VOLUME</span>
+        <span id="sfxValue">50%</span>
+      </label>
 
-    <div id="bsodbar">
-      <div id="bsodfill"></div>
+      <input id="sfxSlider"
+             type="range"
+             min="0"
+             max="100"
+             value="50">
     </div>
 
-    <div class="code">
-      Stop code: A90_ENCRYPTION_FAILURE
-    </div>
+    <button class="backBtn" onclick="goMenu()">BACK</button>
+
   </div>
+</div>
 
-  <div id="mini" class="screen">
-    <h2>SIGNAL RECOVERY</h2>
+<div id="quests" class="screen">
+  <div class="panel">
 
-    <div class="timer" id="miniTimer">
-      TIME: 15.0
+    <h1>QUESTS</h1>
+
+    <div style="text-align:center;margin-bottom:10px">
+      💰 Ransom Points:
+      <span id="questRP">0</span>
     </div>
 
-    <div class="status" id="miniStatus">
-      Find the nodes before the signal is lost.
-    </div>
+    <div id="questContent"></div>
+
+    <button class="backBtn" onclick="goMenu()">BACK</button>
+
   </div>
+</div>
 
-  <div id="end" class="screen">
-    <div class="thanks">
-      <img
-        src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/Thank_you.png?v=2">
-    </div>
+<div id="gallery" class="screen">
+  <div class="panel">
+
+    <h1>GALLERY</h1>
+
+    <div id="galleryContent"></div>
+
+    <button class="backBtn" onclick="goMenu()">BACK</button>
+
   </div>
+</div>
 
-  <div id="toast"></div>
+<div id="badge">
+  <div id="badgeIcon">🛑</div>
+
+  <div>
+    <b>Stop Right There</b>
+    <small>How about a blue stop sign instead</small>
+  </div>
+</div>
+
+<div id="toast"></div>
 
 </div>
 
 <script>
-const assets='https://scriptersketch.github.io/A-90-Game-Mobile-Port/';
 
+const assets='https://scriptersketch.github.io/A-90-Game-Mobile-Port/';
 const $=id=>document.getElementById(id);
+
+/* =========================
+   GAME STATE
+========================= */
 
 let audio=null;
+let audioType='';
+
+let menuMusic=null;
+let shopMusic=null;
+
+let musicFadeFrame=null;
+
 let stage=0;
 let stageStart=0;
+
 let activity=false;
 let paid=false;
+
 let balance=500;
-let remaining=125;
+let remaining=90;
+
 let riserPlayed=false;
 
 let stormPopups=[];
@@ -486,15 +424,9 @@ let miniStart=0;
 let miniNextMove=0;
 let miniFound=0;
 
-const SETTINGS={
-  hideCoins:true,
-  coinAppear:55000,
-  ransomAppear:125000,
-  coinRequirement:500,
-  vaultDepth:7,
-  collectMode:'Double-click',
-  intenseCrash:false
-};
+/* =========================
+   TIMINGS
+========================= */
 
 const TIMINGS={
   randomFlash:300,
@@ -510,514 +442,2209 @@ const TIMINGS={
   miniGame:15000,
   target:6,
   miniMove:1150,
-  distortionFrame:70,
   safeCrash:5200,
-  thankYou:4154,
-  movementTolerance:3,
-  popupTeleportMin:560,
-  popupTeleportMax:1250
+  thankYou:4154
 };
 
-function show(id){
-  document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
-  $(id).classList.add('active');
-}
+/* =========================
+   SAVED PLAYER DATA
+========================= */
 
-function hide(id){
-  $(id).classList.remove('active');
-}
+const defaultData={
+  ransomPoints:0,
+  stardust:0,
+  ownedItems:[],
+  ownedCosmetics:[
+    'crucifix_default',
+    'camera_default',
+    'ransom_classic'
+  ],
+  selectedCrucifix:'crucifix_default',
+  selectedCamera:'camera_default',
+  selectedRansom:'ransom_classic',
+  chromas:[],
+  completedQuests:[],
+  questProgress:{}
+};
 
-function toast(msg){
-  const t=$('toast');
-  if(!t)return;
-  t.textContent=msg;
-  t.style.display='block';
-  clearTimeout(t._timer);
-  t._timer=setTimeout(()=>t.style.display='none',2200);
-}
+let DATA=loadData();
 
-function playAudio(name,loop=false){
+function loadData(){
+
   try{
+    const saved=JSON.parse(
+      localStorage.getItem('A90_SAVE')
+    );
+
+    return Object.assign({},defaultData,saved||{});
+
+  }catch{
+    return Object.assign({},defaultData);
+  }
+}
+
+function saveData(){
+
+  try{
+    localStorage.setItem(
+      'A90_SAVE',
+      JSON.stringify(DATA)
+    );
+  }catch{}
+
+}
+
+function refreshCurrency(){
+
+  $('rpDisplay').textContent=DATA.ransomPoints;
+  $('stardustDisplay').textContent=DATA.stardust;
+
+  if($('shopRP'))
+    $('shopRP').textContent=DATA.ransomPoints;
+
+  if($('shopSD'))
+    $('shopSD').textContent=DATA.stardust;
+
+  if($('questRP'))
+    $('questRP').textContent=DATA.ransomPoints;
+}
+
+function addRP(amount){
+
+  DATA.ransomPoints+=amount;
+
+  saveData();
+  refreshCurrency();
+
+  toast('+'+amount+' Ransom Points!');
+}
+
+function addStardust(amount){
+
+  DATA.stardust+=amount;
+
+  saveData();
+  refreshCurrency();
+
+  toast('+'+amount+' Stardust!');
+}
+
+function spendRP(amount){
+
+  if(DATA.ransomPoints<amount)
+    return false;
+
+  DATA.ransomPoints-=amount;
+
+  saveData();
+  refreshCurrency();
+
+  return true;
+}
+
+function spendStardust(amount){
+
+  if(DATA.stardust<amount)
+    return false;
+
+  DATA.stardust-=amount;
+
+  saveData();
+  refreshCurrency();
+
+  return true;
+}
+
+/* =========================
+   SETTINGS
+========================= */
+
+let SETTINGS={
+  musicVolume:50,
+  sfxVolume:50
+};
+
+try{
+
+  const savedSettings=
+    JSON.parse(
+      localStorage.getItem('A90_SETTINGS')
+    );
+
+  if(savedSettings)
+    SETTINGS=Object.assign(
+      SETTINGS,
+      savedSettings
+    );
+
+}catch{}
+
+/* =========================
+   AUDIO
+========================= */
+
+function saveSettings(){
+
+  try{
+    localStorage.setItem(
+      'A90_SETTINGS',
+      JSON.stringify(SETTINGS)
+    );
+  }catch{}
+
+}
+
+/*
+  Stop only the music players.
+  SFX has its own player so entering/leaving
+  the shop doesn't interfere with game sounds.
+*/
+
+function stopMusic(){
+
+  if(musicFadeFrame){
+    cancelAnimationFrame(musicFadeFrame);
+    musicFadeFrame=null;
+  }
+
+  if(menuMusic){
+
+    try{
+      menuMusic.pause();
+      menuMusic.currentTime=0;
+    }catch{}
+
+  }
+
+  if(shopMusic){
+
+    try{
+      shopMusic.pause();
+      shopMusic.currentTime=0;
+    }catch{}
+
+  }
+
+  menuMusic=null;
+  shopMusic=null;
+}
+
+function fadeInMusic(a,target){
+
+  if(musicFadeFrame){
+    cancelAnimationFrame(musicFadeFrame);
+  }
+
+  const start=performance.now();
+
+  a.volume=0;
+
+  function step(now){
+
+    const p=Math.min(
+      1,
+      (now-start)/3000
+    );
+
+    a.volume=target*p;
+
+    if(p<1 && !a.paused){
+
+      musicFadeFrame=
+        requestAnimationFrame(step);
+
+    }else{
+
+      musicFadeFrame=null;
+
+    }
+  }
+
+  musicFadeFrame=
+    requestAnimationFrame(step);
+}
+
+/* MENU MUSIC */
+
+function playMenuMusic(){
+
+  stopMusic();
+
+  try{
+
+    const volume=
+      SETTINGS.musicVolume/100;
+
+    menuMusic=
+      new Audio(
+        assets+'intro_theme.mp3?v=2'
+      );
+
+    menuMusic.loop=true;
+    menuMusic.preload='auto';
+    menuMusic.volume=0;
+
+    menuMusic.play()
+      .then(()=>{
+        fadeInMusic(
+          menuMusic,
+          volume
+        );
+      })
+      .catch(()=>{
+        /* Safari may require another user gesture */
+      });
+
+  }catch{}
+
+}
+
+/* SHOP MUSIC */
+
+function playShopMusic(){
+
+  stopMusic();
+
+  try{
+
+    const volume=
+      SETTINGS.musicVolume/100;
+
+    /*
+      IMPORTANT:
+      TheShop.mp3 must be in the repository root,
+      beside intro_theme.mp3.
+    */
+
+    shopMusic=
+      new Audio(
+        assets+'TheShop.mp3?v=2'
+      );
+
+    shopMusic.loop=true;
+    shopMusic.preload='auto';
+    shopMusic.volume=0;
+
+    shopMusic.addEventListener(
+      'error',
+      ()=>{
+        toast('Could not load TheShop.mp3');
+      },
+      {once:true}
+    );
+
+    shopMusic.play()
+      .then(()=>{
+        fadeInMusic(
+          shopMusic,
+          volume
+        );
+      })
+      .catch(()=>{
+        /*
+          Because openShop() is called directly
+          from the SHOP button, this normally plays
+          immediately on Safari.
+        */
+      });
+
+  }catch{}
+
+}
+
+/* SFX / ONE-SHOT AUDIO */
+
+function playAudio(
+  name,
+  loop=false,
+  type='sfx'
+){
+
+  try{
+
     if(audio){
+
       audio.pause();
       audio.currentTime=0;
+
     }
 
-    audio=new Audio(assets+name+'?v=2');
+    audio=
+      new Audio(
+        assets+name+'?v=2'
+      );
+
     audio.loop=loop;
-    audio.volume=1;
+    audioType=type;
+
+    const volume=
+      type==='music'
+        ? SETTINGS.musicVolume/100
+        : SETTINGS.sfxVolume/100;
+
+    audio.volume=volume;
 
     audio.play().catch(()=>{
-      toast('Tap PLAY again if audio is blocked by Safari.');
+      /*
+        Don't interrupt the game if Safari blocks
+        a sound. Music has its own player.
+      */
     });
+
   }catch{}
+
 }
 
 function stopAudio(){
+
   try{
+
     if(audio){
+
       audio.pause();
       audio.currentTime=0;
+
     }
+
   }catch{}
+
   audio=null;
+  audioType='';
 }
 
-function rand(min,max){
-  return Math.random()*(max-min)+min;
+/* SETTINGS UI */
+
+$('musicSlider').value=
+  SETTINGS.musicVolume;
+
+$('sfxSlider').value=
+  SETTINGS.sfxVolume;
+
+$('musicValue').textContent=
+  SETTINGS.musicVolume+'%';
+
+$('sfxValue').textContent=
+  SETTINGS.sfxVolume+'%';
+
+$('musicSlider').addEventListener(
+  'input',
+  ()=>{
+
+    SETTINGS.musicVolume=
+      Number($('musicSlider').value);
+
+    $('musicValue').textContent=
+      SETTINGS.musicVolume+'%';
+
+    saveSettings();
+
+    const volume=
+      SETTINGS.musicVolume/100;
+
+    if(menuMusic)
+      menuMusic.volume=volume;
+
+    if(shopMusic)
+      shopMusic.volume=volume;
+
+  }
+);
+
+$('sfxSlider').addEventListener(
+  'input',
+  ()=>{
+
+    SETTINGS.sfxVolume=
+      Number($('sfxSlider').value);
+
+    $('sfxValue').textContent=
+      SETTINGS.sfxVolume+'%';
+
+    saveSettings();
+
+    if(audio)
+      audio.volume=
+        SETTINGS.sfxVolume/100;
+
+  }
+);
+
+/* =========================
+   SCREENS
+========================= */
+
+function show(id){
+
+  document
+    .querySelectorAll('.screen')
+    .forEach(x=>
+      x.classList.remove('active')
+    );
+
+  $(id).classList.add('active');
 }
 
-function randint(min,max){
-  return Math.floor(rand(min,max+1));
+function goMenu(){
+
+  stopAudio();
+  stopMusic();
+
+  resetGameObjects();
+
+  stage=0;
+
+  show('intro');
+
+  $('menu').style.display='flex';
+
+  refreshCurrency();
+
+  playMenuMusic();
 }
 
-function clamp(v,a,b){
-  return Math.max(a,Math.min(b,v));
+function toast(msg){
+
+  const t=$('toast');
+
+  t.textContent=msg;
+  t.style.display='block';
+
+  clearTimeout(t._timer);
+
+  t._timer=
+    setTimeout(
+      ()=>t.style.display='none',
+      2200
+    );
 }
 
-function clearGameObjects(){
-  $('popupLayer').innerHTML='';
-  stormPopups=[];
-  document.querySelectorAll('.coin').forEach(c=>c.remove());
-  document.querySelectorAll('.node').forEach(n=>n.remove());
-}
+/* =========================
+   INTRO
+========================= */
 
 function intro(){
+
+  stopAudio();
+  stopMusic();
+
+  stage=0;
+
   show('intro');
 
   $('menu').style.display='none';
 
-  setTimeout(()=>{
-    const by=document.querySelector('.credit .by');
-    const name=document.querySelector('.credit .name');
-    const ninety=document.querySelector('.credit .ninety');
+  const credit=$('credits');
 
-    if(by)by.style.display='block';
-    if(name)name.style.display='none';
-    if(ninety)ninety.style.display='none';
-  },0);
+  const by=
+    credit.querySelector('.by');
 
-  setTimeout(()=>{
-    const name=document.querySelector('.credit .name');
-    if(name)name.style.display='block';
-  },3700);
+  const name=
+    credit.querySelector('.name');
 
-  setTimeout(()=>{
-    const credit=document.querySelector('.credit');
-    if(credit)credit.style.display='none';
-    $('menu').style.display='flex';
-    show('menu');
-  },10400);
+  const ninety=
+    credit.querySelector('.ninety');
 
-  setTimeout(()=>{
-    if($('menu').style.display!=='none'){
-      show('menu');
-    }
-  },13900);
+  credit.style.display='block';
+
+  by.style.display='none';
+  name.style.display='none';
+  ninety.style.display='none';
+
+  setTimeout(
+    ()=>by.style.display='block',
+    0
+  );
+
+  setTimeout(
+    ()=>name.style.display='block',
+    3700
+  );
+
+  setTimeout(
+    ()=>ninety.style.display='block',
+    7400
+  );
+
+  setTimeout(
+    ()=>{
+      credit.style.display='none';
+
+      $('menu').style.display='flex';
+
+      refreshCurrency();
+
+      playMenuMusic();
+    },
+    10400
+  );
 }
 
-function startGame(){
+/* =========================
+   MENU BUTTONS
+========================= */
+
+$('play').onclick=()=>{
+  show('warning');
+};
+
+$('back').onclick=()=>{
+
+  show('intro');
+
+  $('menu').style.display='flex';
+
+  playMenuMusic();
+};
+
+$('understand').onclick=()=>{
+  startGame();
+};
+
+$('settings').onclick=()=>{
+
+  stopMusic();
+
+  show('settingsScreen');
+};
+
+$('shopBtn').onclick=()=>{
+
+  /*
+    This is a direct user gesture, so Safari/iPadOS
+    is allowed to start the shop music here.
+  */
+
+  show('shop');
+
+  shopTab('items');
+
+  playShopMusic();
+};
+
+$('questsBtn').onclick=()=>{
+
+  stopMusic();
+
+  show('quests');
+
+  renderQuests();
+};
+
+$('exit').onclick=()=>{
+
+  toast(
+    'You can safely close this Safari tab.'
+  );
+
+};
+
+$('safeExit').onclick=()=>{
+
+  stage=0;
+
+  stopAudio();
+  stopMusic();
+
+  resetGameObjects();
+
+  intro();
+};
+
+/* =========================
+   SHOP DATA
+========================= */
+
+const SHOP={
+
+  items:[
+
+    {
+      id:'camera',
+      name:'Camera',
+      price:250,
+      desc:'Unlocks the Gallery and camera effects.'
+    },
+
+    {
+      id:'crucifix',
+      name:'Crucifix',
+      price:400,
+      desc:'A purely visual item used in the Ransom encounter.'
+    }
+
+  ],
+
+  cosmetics:[
+
+    {
+      id:'crucifix_overgrown',
+      name:'Overgrown Crucifix',
+      price:300,
+      desc:'Vines, grass, and a tiny lotus flower.'
+    },
+
+    {
+      id:'camera_polaroid',
+      name:'Polaroid Camera',
+      price:275,
+      desc:'1950s-inspired black-and-white photo effect.'
+    },
+
+    {
+      id:'ransom_drone',
+      name:'Drone Ransom',
+      price:500,
+      desc:'An original inky drone-inspired Ransom design.'
+    },
+
+    {
+      id:'crucifix_violet',
+      name:'Violet Chroma',
+      price:75,
+      currency:'stardust',
+      desc:'Violet aura for Overgrown.'
+    },
+
+    {
+      id:'crucifix_sakura',
+      name:'Sakura Chroma',
+      price:75,
+      currency:'stardust',
+      desc:'White aura for Overgrown.'
+    },
+
+    {
+      id:'crucifix_rose',
+      name:'Rose Chroma',
+      price:75,
+      currency:'stardust',
+      desc:'Red aura for Overgrown.'
+    }
+
+  ]
+
+};
+
+function owned(id){
+
+  return DATA.ownedItems.includes(id) ||
+         DATA.ownedCosmetics.includes(id) ||
+         DATA.chromas.includes(id);
+
+}
+
+function buyItem(item){
+
+  if(owned(item.id)){
+
+    toast('Already owned!');
+
+    return;
+  }
+
+  const currency=
+    item.currency||'rp';
+
+  const ok=
+    currency==='stardust'
+      ? spendStardust(item.price)
+      : spendRP(item.price);
+
+  if(!ok){
+
+    toast(
+      'Not enough '+
+      (
+        currency==='stardust'
+          ? 'Stardust'
+          : 'Ransom Points'
+      )+
+      '!'
+    );
+
+    return;
+  }
+
+  if(currency==='stardust'){
+
+    DATA.chromas.push(item.id);
+
+  }else if(
+    item.id==='camera' ||
+    item.id==='crucifix'
+  ){
+
+    DATA.ownedItems.push(item.id);
+
+  }else{
+
+    DATA.ownedCosmetics.push(item.id);
+
+  }
+
+  saveData();
+
+  toast(
+    'Purchased '+item.name+'!'
+  );
+
+  shopTab(currentShopTab);
+}
+
+let currentShopTab='items';
+
+function shopTab(tab){
+
+  currentShopTab=tab;
+
+  const box=
+    $('shopContent');
+
+  if(tab==='items'){
+
+    box.innerHTML=
+      SHOP.items.map(item=>`
+
+        <div class="shopItem">
+
+          <h3>${item.name}</h3>
+
+          <p>${item.desc}</p>
+
+          ${
+            owned(item.id)
+
+              ? '<div class="owned">OWNED</div>'
+
+              : `
+                <button
+                  onclick="buyItem(
+                    SHOP.items.find(
+                      x=>x.id==='${item.id}'
+                    )
+                  )"
+                >
+                  💰 ${item.price} RP
+                </button>
+              `
+          }
+
+        </div>
+
+      `).join('');
+
+    return;
+  }
+
+  if(tab==='cosmetics'){
+
+    box.innerHTML=
+      SHOP.cosmetics.map(item=>`
+
+        <div class="shopItem">
+
+          <h3>${item.name}</h3>
+
+          <p>${item.desc}</p>
+
+          ${
+            owned(item.id)
+
+              ? '<div class="owned">OWNED</div>'
+
+              : `
+                <button
+                  onclick="buyItem(
+                    SHOP.cosmetics.find(
+                      x=>x.id==='${item.id}'
+                    )
+                  )"
+                >
+                  ${
+                    item.currency==='stardust'
+                      ? '✨'
+                      : '💰'
+                  }
+                  ${item.price}
+                  ${
+                    item.currency==='stardust'
+                      ? 'SD'
+                      : 'RP'
+                  }
+                </button>
+              `
+          }
+
+        </div>
+
+      `).join('');
+
+    return;
+  }
+
+  if(tab==='gallery'){
+
+    if(!DATA.ownedItems.includes('camera')){
+
+      box.innerHTML=`
+        <div class="shopItem">
+
+          <h3>GALLERY LOCKED</h3>
+
+          <p>
+            Purchase the Camera to unlock
+            the Gallery.
+          </p>
+
+        </div>
+      `;
+
+      return;
+    }
+
+    box.innerHTML=`
+
+      <div class="shopItem">
+
+        <h3>A90 Archives</h3>
+
+        <p>
+          Camera unlocked.
+          The Gallery contains your
+          discovered visual records.
+        </p>
+
+        <button
+          onclick="
+            show('gallery');
+            renderGallery();
+            stopMusic();
+          "
+        >
+          OPEN GALLERY
+        </button>
+
+      </div>
+
+    `;
+  }
+}
+
+/* =========================
+   QUESTS
+========================= */
+
+const QUEST_POOL=[
+
+  {
+    id:'first_escape',
+    title:'First Escape',
+    desc:'Successfully complete Signal Recovery.',
+    reward:100,
+    type:'escape'
+  },
+
+  {
+    id:'crucifix_bind',
+    title:'Stop Right There',
+    desc:'Successfully bind Ransom with the Crucifix.',
+    reward:150,
+    type:'crucifix'
+  },
+
+  {
+    id:'close_call',
+    title:'Close Call',
+    desc:'Complete Signal Recovery with less than 3 seconds remaining.',
+    reward:75,
+    type:'close'
+  },
+
+  {
+    id:'collect_ransom',
+    title:'Debt Collector',
+    desc:'Successfully pay the ransom using the scattered coins.',
+    reward:100,
+    type:'pay'
+  }
+
+];
+
+function activeQuests(){
+
+  return QUEST_POOL.filter(
+    q=>
+      !DATA.completedQuests.includes(q.id)
+  );
+
+}
+
+function completeQuest(id){
+
+  if(
+    DATA.completedQuests.includes(id)
+  )
+    return;
+
+  const q=
+    QUEST_POOL.find(
+      x=>x.id===id
+    );
+
+  if(!q)return;
+
+  DATA.completedQuests.push(id);
+
+  saveData();
+
+  addRP(q.reward);
+
+  renderQuests();
+}
+
+function renderQuests(){
+
+  const box=
+    $('questContent');
+
+  const qs=
+    activeQuests();
+
+  if(!qs.length){
+
+    box.innerHTML=`
+      <div class="quest">
+
+        <h3>All quests complete!</h3>
+
+        <p>
+          More quests will appear
+          in a future update.
+        </p>
+
+      </div>
+    `;
+
+    return;
+  }
+
+  box.innerHTML=
+    qs.map(q=>`
+
+      <div class="quest">
+
+        <h3>${q.title}</h3>
+
+        <p>${q.desc}</p>
+
+        <p>
+          Reward:
+          <b>💰 ${q.reward} RP</b>
+        </p>
+
+        <button
+          onclick="
+            toast('Complete the quest in-game!')
+          "
+        >
+          TRACK
+        </button>
+
+      </div>
+
+    `).join('');
+}
+
+function questEvent(type){
+
+  const q=
+    activeQuests().find(
+      x=>x.type===type
+    );
+
+  if(q)
+    completeQuest(q.id);
+}
+
+/* =========================
+   GALLERY
+========================= */
+
+function renderGallery(){
+
+  const box=
+    $('galleryContent');
+
+  if(!DATA.ownedItems.includes('camera')){
+
+    box.innerHTML=`
+      <div class="shopItem">
+
+        <h3>LOCKED</h3>
+
+        <p>Buy the Camera first.</p>
+
+      </div>
+    `;
+
+    return;
+  }
+
+  box.innerHTML=`
+
+    <div class="shopItem">
+      <h3>A90 Encounter</h3>
+      <p>Ransom encounter record unlocked.</p>
+    </div>
+
+    <div class="shopItem">
+      <h3>Ransom</h3>
+      <p>Classic encounter entity.</p>
+    </div>
+
+    <div class="shopItem">
+      <h3>Crucifix Binding</h3>
+      <p>Successful crucifix binding record.</p>
+    </div>
+
+  `;
+}
+
+/* =========================
+   CRUCIFIX
+========================= */
+
+function useCrucifix(){
+
+  if(
+    !DATA.ownedItems.includes('crucifix')
+  ){
+
+    toast(
+      'You need the Crucifix from the Shop!'
+    );
+
+    return;
+  }
+
+  const roll=
+    Math.random();
+
+  if(roll<0.15){
+
+    bindRansom();
+
+  }else if(roll<0.20){
+
+    addStardust(1);
+
+    toast(
+      'The Crucifix flickered...'
+    );
+
+  }else{
+
+    toast(
+      'The Crucifix failed to bind Ransom.'
+    );
+
+  }
+}
+
+function bindRansom(){
+
+  stage=0;
+
+  stopAudio();
+  stopMusic();
+
   clearGameObjects();
 
-  show('game');
+  addStardust(3);
 
-  stage=1;
-  stageStart=performance.now();
-  activity=false;
-  paid=false;
-  balance=500;
-  remaining=90;
-  riserPlayed=false;
+  questEvent('crucifix');
+
+  showBadge();
+
+  const layer=
+    $('game');
+
+  const c=
+    document.createElement('img');
+
+  c.className='crucifix';
+
+  c.style.position='absolute';
+  c.style.width='130px';
+  c.style.height='130px';
+  c.style.left='50%';
+  c.style.top='50%';
+  c.style.transform=
+    'translate(-50%,-50%)';
+
+  c.src=
+    assets+
+    'ransom_crucifix.png?v=2';
+
+  layer.appendChild(c);
+
+  const start=
+    performance.now();
+
+  function spin(now){
+
+    const e=
+      now-start;
+
+    c.style.transform=
+      'translate(-50%,-50%) rotate('+
+      (e/4)+
+      'deg)';
+
+    if(e<2000){
+
+      requestAnimationFrame(spin);
+
+    }else{
+
+      c.remove();
+
+      playAudio(
+        'ransom_thank_you.mp3',
+        false,
+        'sfx'
+      );
+
+      setTimeout(
+        ()=>intro(),
+        2200
+      );
+
+    }
+  }
+
+  requestAnimationFrame(spin);
+}
+
+function showBadge(){
+
+  const b=
+    $('badge');
+
+  b.style.display='flex';
+
+  clearTimeout(b._hide);
+
+  b._hide=
+    setTimeout(
+      ()=>{
+        b.style.display='none';
+      },
+      5000
+    );
+}
+
+/* =========================
+   GAME OBJECT CLEANUP
+========================= */
+
+function clearGameObjects(){
+
+  $('popupLayer').innerHTML='';
+  $('popupLayer').style.display='none';
+
   stormPopups=[];
+
   stormCycleStart=0;
   stormRemovalAt=0;
+
+  document
+    .querySelectorAll('.coin')
+    .forEach(x=>x.remove());
+
+  document
+    .querySelectorAll('.node')
+    .forEach(x=>x.remove());
+
+  document
+    .querySelectorAll('.crucifix')
+    .forEach(x=>x.remove());
+}
+
+function resetGameObjects(){
+
+  clearGameObjects();
 
   $('face').style.display='none';
   $('stopFace').style.display='none';
   $('attackFace').style.display='none';
+
   $('download').style.display='none';
 
-  playAudio('intro_theme.mp3',false);
+  $('fill').style.width='0%';
+  $('pct').textContent='0%';
+
+  $('game').style.background=
+    'transparent';
+
+  $('bsod').style.opacity='1';
 }
 
-function update(){
-  requestAnimationFrame(update);
+/* =========================
+   GAME START
+========================= */
 
-  if(stage===0)return;
+function startGame(){
 
-  const now=performance.now();
-  const e=now-stageStart;
+  resetGameObjects();
 
-  if(stage===1){
-    if(e>=TIMINGS.randomFlash){
-      $('face').style.display='block';
-      stage=2;
-      stageStart=now;
-    }
+  stopMusic();
+
+  show('game');
+
+  stage=1;
+
+  stageStart=
+    performance.now();
+
+  activity=false;
+
+  paid=false;
+
+  balance=500;
+  remaining=90;
+
+  riserPlayed=false;
+
+  $('face').style.display='none';
+  $('stopFace').style.display='none';
+  $('attackFace').style.display='none';
+
+  playAudio(
+    'ransom_appear.mp3',
+    false,
+    'sfx'
+  );
+
+  tick();
+}
+
+function placeFace(){
+
+  const f=
+    $('face');
+
+  f.style.display='block';
+
+  f.style.left=
+    rand(8,80)+'vw';
+
+  f.style.top=
+    rand(8,76)+'vh';
+}
+
+/* =========================
+   A-90 MOVEMENT DETECTION
+========================= */
+
+/*
+  IMPORTANT:
+
+  A-90 is NOT triggered by simply touching the
+  screen.
+
+  The player must actually move.
+
+  A movement of at least 3 pixels during the
+  STOP phase sets activity=true.
+
+  This works with:
+  - iPad touch movement
+  - pointer movement
+  - mouse movement
+*/
+
+let movementX=null;
+let movementY=null;
+
+function resetMovementTracking(){
+
+  movementX=null;
+  movementY=null;
+
+}
+
+function registerMovement(x,y){
+
+  if(stage!==3)
+    return;
+
+  if(
+    movementX===null ||
+    movementY===null
+  ){
+
+    movementX=x;
+    movementY=y;
+
+    return;
   }
 
-  else if(stage===2){
-    if(e>=TIMINGS.centerFlash){
-      $('face').style.display='none';
-      $('stopFace').style.display='block';
-      stage=3;
-      stageStart=now;
-    }
+  const distance=
+    Math.hypot(
+      x-movementX,
+      y-movementY
+    );
+
+  if(distance>=3){
+
+    activity=true;
+
   }
 
-  else if(stage===3){
-    if(e>=TIMINGS.stopWarning){
-      $('stopFace').style.display='none';
-      $('attackFace').style.display='block';
+  movementX=x;
+  movementY=y;
+}
 
-      stage=4;
-      stageStart=now;
-    }
+/* Pointer movement */
+
+window.addEventListener(
+  'pointermove',
+  e=>{
+
+    registerMovement(
+      e.clientX,
+      e.clientY
+    );
+
+  },
+  {passive:true}
+);
+
+/* Mouse fallback */
+
+window.addEventListener(
+  'mousemove',
+  e=>{
+
+    registerMovement(
+      e.clientX,
+      e.clientY
+    );
+
+  },
+  {passive:true}
+);
+
+/* Touch fallback */
+
+window.addEventListener(
+  'touchmove',
+  e=>{
+
+    if(
+      !e.touches ||
+      !e.touches[0]
+    )
+      return;
+
+    registerMovement(
+      e.touches[0].clientX,
+      e.touches[0].clientY
+    );
+
+  },
+  {passive:true}
+);
+
+/* =========================
+   MAIN GAME LOOP
+========================= */
+
+function tick(){
+
+  if(stage===0)
+    return;
+
+  const now=
+    performance.now();
+
+  const e=
+    now-stageStart;
+
+  /* FIRST A-90 APPEARANCE */
+
+  if(
+    stage===1 &&
+    e>=TIMINGS.randomFlash
+  ){
+
+    placeFace();
+
+    stage=2;
+
+    stageStart=now;
+
   }
+
+  /* MOVE A-90 TO CENTER */
+
+  else if(
+    stage===2 &&
+    e>=TIMINGS.centerFlash
+  ){
+
+    $('face').style.display='none';
+
+    $('stopFace').style.display='block';
+
+    $('stopFace').style.left='50%';
+    $('stopFace').style.top='50%';
+
+    $('stopFace').style.transform=
+      'translate(-50%,-50%)';
+
+    stage=3;
+
+    stageStart=now;
+
+    /*
+      This is the important reset.
+      The player must move AFTER A-90 reaches
+      the STOP phase.
+    */
+
+    activity=false;
+
+    resetMovementTracking();
+
+  }
+
+  /* A-90 STOP / MOVEMENT CHECK */
+
+  else if(
+    stage===3 &&
+    e>=TIMINGS.stopWarning
+  ){
+
+    /*
+      If the player stayed completely still,
+      A-90 leaves and the game returns to menu.
+
+      If the player moved, A-90 catches them
+      and the attack sequence begins.
+    */
+
+    if(!activity){
+
+      toast(
+        'You stayed still. A90 left.'
+      );
+
+      stage=0;
+
+      setTimeout(
+        ()=>intro(),
+        900
+      );
+
+      return;
+    }
+
+    /*
+      MOVEMENT DETECTED:
+      A-90 catches the player.
+    */
+
+    $('stopFace').style.display='none';
+
+    $('attackFace').style.display='block';
+
+    $('attackFace').style.left='50%';
+    $('attackFace').style.top='50%';
+
+    $('attackFace').style.transform=
+      'translate(-50%,-50%)';
+
+    playAudio(
+      'ransom_attack_audio.mp3',
+      false,
+      'sfx'
+    );
+
+    stage=4;
+
+    stageStart=now;
+
+  }
+
+  /* ATTACK */
 
   else if(stage===4){
-    const p=clamp(e/TIMINGS.attackDuration,0,1);
-    const size=420+(630-420)*p;
 
-    $('attackFace').style.width=size+'px';
-    $('attackFace').style.height=size+'px';
+    const p=
+      Math.min(
+        1,
+        e/TIMINGS.attackDuration
+      );
 
-    if(e>=TIMINGS.attackDuration){
+    const size=
+      420+
+      (630-420)*p;
+
+    $('attackFace').style.width=
+      size+'px';
+
+    $('attackFace').style.height=
+      size+'px';
+
+    if(
+      e>=TIMINGS.attackDuration
+    ){
+
       $('attackFace').style.display='none';
+
       $('download').style.display='flex';
 
       stage=5;
+
       stageStart=now;
+
     }
+
   }
+
+  /* DOWNLOAD */
 
   else if(stage===5){
-    const p=clamp(e/TIMINGS.download,0,1);
-    $('fill').style.width=(p*100)+'%';
-    $('pct').textContent=Math.floor(p*100)+'%';
 
-    if(e>=TIMINGS.download){
+    const p=
+      Math.min(
+        1,
+        e/TIMINGS.download
+      );
+
+    $('fill').style.width=
+      (p*100)+'%';
+
+    $('pct').textContent=
+      Math.floor(p*100)+'%';
+
+    if(
+      e>=TIMINGS.download
+    ){
+
       $('download').style.display='none';
 
-      document.body.style.background='#fff';
+      $('game').style.background='#fff';
 
-      setTimeout(()=>{
-        document.body.style.background='#000';
-        beginRansom();
-      },TIMINGS.whiteFlash);
+      setTimeout(
+        ()=>{
+          $('game').style.background=
+            'transparent';
+
+          beginRansom();
+
+        },
+        TIMINGS.whiteFlash
+      );
+
+      stage=6;
+
+      stageStart=
+        performance.now();
+
     }
+
   }
+
+  /* RANSOM */
 
   else if(stage===6){
+
     updatePopupStage(now);
+
   }
+
+  /* UNPAID */
 
   else if(stage===7){
+
     updateUnpaid(now);
+
   }
+
+  /* MINI GAME */
 
   else if(stage===8){
+
     updateMini(now);
+
   }
+
+  requestAnimationFrame(tick);
 }
 
+/* =========================
+   RANSOM
+========================= */
+
 function beginRansom(){
+
   stage=6;
-  stageStart=performance.now();
+
+  stageStart=
+    performance.now();
+
+  balance=500;
 
   remaining=90;
+
   riserPlayed=false;
 
   $('popupLayer').style.display='block';
 
   createMainPopup();
 
-  if(!SETTINGS.hideCoins){
-    spawnCoins();
-  }
+  spawnCoins();
 
-  stormCycleStart=performance.now();
-  stormRemovalAt=0;
+  startDecorativeStorm();
 
-  playAudio('ransom_theme.mp3',true);
+  /*
+    The ransom music uses the SFX/music player
+    separately from menu/shop music.
+  */
+
+  stopMusic();
+
+  playAudio(
+    'ransom_theme.mp3',
+    true,
+    'music'
+  );
 }
 
 function createMainPopup(){
-  const layer=$('popupLayer');
 
-  const popup=document.createElement('div');
-  popup.className='popup mainpopup';
+  const p=
+    document.createElement('div');
 
-  popup.style.left='50%';
-  popup.style.top='50%';
-  popup.style.transform='translate(-50%,-50%)';
-  popup.style.zIndex='10';
+  p.className=
+    'popup mainpopup';
 
-  popup.innerHTML=`
+  p.style.left='50%';
+  p.style.top='50%';
+
+  p.style.transform=
+    'translate(-50%,-50%)';
+
+  p.style.zIndex='10';
+
+  p.innerHTML=`
+
     <div class="mainHead">
-      <img src="${assets}ransom_idle.png?v=2">
+
+      <img
+        src="${assets}ransom_idle.png?v=2"
+      >
+
       <b>
-        A90<br>
-        SECURITY ALERT
+        YOUR ITEMS<br>
+        HAVE BEEN<br>
+        ENCRYPTED
       </b>
+
     </div>
 
     <div class="mainBody">
-      <div>
-        YOUR ITEMS HAVE BEEN ENCRYPTED<br><br>
-        PAY THE RANSOM TO RECOVER THEM.
-      </div>
+
+      IF YOU DO NOT PAY THIS RANSOM<br>
+      BEFORE THE TIMER ENDS, YOUR ITEMS<br>
+      WILL BE UNRECOVERABLE BY ANY MEANS.
+
     </div>
 
     <div class="payrow">
+
       <div class="goldbox">
-        <img src="${assets}gold.ico?v=2">
+
         <span id="balanceText">500</span>
+
+        <img
+          src="${assets}gold.png?v=2"
+        >
+
       </div>
 
       <div class="timebox">
-        <span id="timer">TIME: 01:30</span>
+
+        <span id="timer">
+          TIME: 01:30
+        </span>
+
       </div>
+
     </div>
+
   `;
 
-  layer.appendChild(popup);
+  /*
+    Clicking the ransom popup itself does NOT
+    count as collecting a coin.
+  */
+
+  p.addEventListener(
+    'pointerdown',
+    ev=>ev.stopPropagation()
+  );
+
+  $('popupLayer')
+    .appendChild(p);
 }
+
+function spawnCoins(){
+
+  const types=[
+
+    ['gold.png',50],
+    ['coin_blue.png',25],
+    ['coin_red.png',25]
+
+  ];
+
+  for(
+    let i=0;
+    i<18;
+    i++
+  ){
+
+    const c=
+      document.createElement('img');
+
+    const type=
+      types[i%3];
+
+    c.className='coin';
+
+    c.src=
+      assets+
+      type[0]+
+      '?v=2';
+
+    c.dataset.value=
+      type[1];
+
+    c.style.left=
+      rand(3,91)+'vw';
+
+    c.style.top=
+      rand(7,84)+'vh';
+
+    c.addEventListener(
+      'pointerdown',
+      ev=>{
+        ev.stopPropagation();
+      }
+    );
+
+    c.addEventListener(
+      'dblclick',
+      ev=>{
+
+        ev.stopPropagation();
+
+        collectCoin(c);
+
+      }
+    );
+
+    $('popupLayer')
+      .appendChild(c);
+  }
+}
+
+function collectCoin(c){
+
+  if(
+    paid ||
+    !c ||
+    !c.parentNode
+  )
+    return;
+
+  const value=
+    Number(c.dataset.value)||0;
+
+  balance=
+    Math.max(
+      0,
+      balance-value
+    );
+
+  const text=
+    $('balanceText');
+
+  if(text)
+    text.textContent=
+      balance;
+
+  c.remove();
+
+  toast(
+    '-'+value+' ransom'
+  );
+
+  if(balance<=0){
+
+    finishPaid();
+
+  }
+}
+
 function updatePopupStage(now){
-  const e=now-stageStart;
 
-  remaining=Math.max(0,90-Math.ceil(e/1000));
+  const e=
+    now-stageStart;
 
-  const sec=String(remaining%60).padStart(2,'0');
-  const min=String(Math.floor(remaining/60)).padStart(2,'0');
+  remaining=
+    Math.max(
+      0,
+      90-Math.ceil(e/1000)
+    );
 
-  const t=$('timer');
-  if(t)t.textContent='TIME: '+min+':'+sec;
+  const sec=
+    String(
+      remaining%60
+    ).padStart(2,'0');
 
-  if(!riserPlayed && remaining<=10 && remaining>0){
-    riserPlayed=true;
-    playAudio('ransom_attack_audio.mp3',false);
+  const min=
+    String(
+      Math.floor(
+        remaining/60
+      )
+    ).padStart(2,'0');
+
+  const timer=
+    $('timer');
+
+  if(timer){
+
+    timer.textContent=
+      'TIME: '+
+      min+
+      ':'+
+      sec;
+
   }
 
   updateStormPopups(now);
 
+  if(
+    !riserPlayed &&
+    remaining<=10 &&
+    remaining>0
+  ){
+
+    riserPlayed=true;
+
+    playAudio(
+      'ransom_attack_audio.mp3',
+      false,
+      'sfx'
+    );
+
+  }
+
   if(e>=90000){
+
     startUnpaid();
-    return;
+
   }
 }
 
-function spawnCoins(){
-  const types=[
-    ['gold.ico',-50],
-    ['coin_blue.ico',-25],
-    ['coin_red.ico',-25]
-  ];
-
-  for(let i=0;i<12;i++){
-    const coin=document.createElement('img');
-    const type=types[i%types.length];
-
-    coin.className='coin';
-    coin.src=assets+type[0]+'?v=2';
-    coin.dataset.value=type[1];
-
-    coin.style.left=rand(5,90)+'vw';
-    coin.style.top=rand(8,82)+'vh';
-
-    coin.addEventListener('dblclick',()=>{
-      collectCoin(coin);
-    });
-
-    $('popupLayer').appendChild(coin);
-  }
-}
-
-function collectCoin(coin){
-  if(paid)return;
-  if(!coin || !coin.parentNode)return;
-
-  const value=Number(coin.dataset.value)||0;
-
-  balance=Math.max(0,balance+value);
-
-  const text=$('balanceText');
-  if(text)text.textContent=balance;
-
-  coin.remove();
-
-  if(balance<=0){
-    finishPaid();
-  }
-}
+/* =========================
+   DECORATIVE POPUPS
+========================= */
 
 function createStormPopup(){
-  const p=document.createElement('div');
 
-  p.className='popup stormpopup';
+  const p=
+    document.createElement('div');
 
-  const w=rand(145,260);
-  const h=rand(75,150);
+  p.className=
+    'popup stormpopup';
 
-  p.style.width=w+'px';
-  p.style.height=h+'px';
+  p.style.width=
+    rand(145,260)+'px';
 
-  p.style.left=rand(2,78)+'vw';
-  p.style.top=rand(5,82)+'vh';
+  p.style.height=
+    rand(75,150)+'px';
 
-  p.style.zIndex='2';
+  p.style.left=
+    rand(2,78)+'vw';
 
-  p.style.setProperty('--shakeDur',rand(.32,.65)+'s');
-  p.style.setProperty('--shakeDelay',rand(0,.25)+'s');
+  p.style.top=
+    rand(5,82)+'vh';
 
-  const mode=randint(0,3);
+  p.style.setProperty(
+    '--shakeDur',
+    rand(.32,.65)+'s'
+  );
 
-  if(mode===0){
-    p.innerHTML=`
-      <div style="height:24px;background:#d00000"></div>
-      <div class="blackmsg">
-        <span>ERROR: FILE RECOVERY FAILED</span>
-      </div>
-    `;
-  }
+  p.style.setProperty(
+    '--shakeDelay',
+    (-rand(0,.6))+'s'
+  );
 
-  else if(mode===1){
-    p.innerHTML=`
-      <div style="height:18px;background:#111"></div>
-      <div class="glitch">
-        YOUR DATA IS NOT SAFE
-      </div>
-      <div style="height:8px;background:#d00000"></div>
-    `;
-  }
+  const variants=[
 
-  else if(mode===2){
-    p.innerHTML=`
-      <div class="stripe" style="top:0;left:0;right:0;background:#d00000"></div>
-      <div class="blackmsg">
-        <span>PAY NOW</span>
-      </div>
-    `;
-  }
+    'ERROR: FILE RECOVERY FAILED',
+    'YOUR DATA IS NOT SAFE',
+    'PAY NOW',
+    'SYSTEM LOCKED',
+    'SIGNAL ERROR',
+    'DATA CORRUPTED',
+    'PAYMENT ERROR',
+    'RECOVERY FAILED'
 
-  else{
-    p.innerHTML=`
-      <div style="height:30px;background:#090909"></div>
-      <div class="glitch">
-        SYSTEM LOCKED
-      </div>
-      <div style="height:18px;background:#9a0000"></div>
-    `;
-  }
+  ];
 
-  $('popupLayer').appendChild(p);
+  p.innerHTML=`
+
+    <div
+      style="
+        height:20px;
+        background:#d00000
+      "
+    ></div>
+
+    <div class="blackmsg">
+      ${
+        variants[
+          randint(
+            0,
+            variants.length-1
+          )
+        ]
+      }
+    </div>
+
+    <div
+      style="
+        height:10px;
+        background:#111
+      "
+    ></div>
+
+  `;
+
+  $('popupLayer')
+    .appendChild(p);
 
   stormPopups.push(p);
 }
 
-function updateStormPopups(now){
-  if(!stormCycleStart){
-    stormCycleStart=now;
-  }
+function startDecorativeStorm(){
 
-  const elapsed=now-stormCycleStart;
+  stormPopups=[];
 
-  if(stormPopups.length<5){
-    while(stormPopups.length<5){
-      createStormPopup();
-    }
-  }
+  stormCycleStart=
+    performance.now();
 
-  if(!stormRemovalAt && elapsed>=3000){
-    stormRemovalAt=now;
-  }
+  stormRemovalAt=0;
 
-  if(stormRemovalAt && now-stormRemovalAt>=0){
-    let removed=0;
-
-    while(removed<2 && stormPopups.length){
-      const p=stormPopups.shift();
-      if(p && p.parentNode)p.remove();
-      removed++;
-    }
-
-    stormRemovalAt=0;
-    stormCycleStart=now+2000;
-  }
-
-  if(
-    stormCycleStart &&
-    now>=stormCycleStart &&
-    stormPopups.length<5
+  for(
+    let i=0;
+    i<5;
+    i++
   ){
-    while(stormPopups.length<5){
-      createStormPopup();
-    }
+
+    createStormPopup();
+
   }
 }
 
+function updateStormPopups(now){
+
+  if(!stormCycleStart)
+    stormCycleStart=now;
+
+  if(
+    stormRemovalAt===0 &&
+    now-stormCycleStart>=3000
+  ){
+
+    const copy=
+      stormPopups.slice();
+
+    for(
+      let i=copy.length-1;
+      i>0;
+      i--
+    ){
+
+      const j=
+        Math.floor(
+          Math.random()*(i+1)
+        );
+
+      [
+        copy[i],
+        copy[j]
+      ]=[
+        copy[j],
+        copy[i]
+      ];
+    }
+
+    copy
+      .slice(0,2)
+      .forEach(p=>{
+
+        if(
+          p &&
+          p.parentNode
+        )
+          p.remove();
+
+        const index=
+          stormPopups.indexOf(p);
+
+        if(index>=0)
+          stormPopups.splice(
+            index,
+            1
+          );
+
+      });
+
+    stormRemovalAt=now;
+  }
+
+  if(
+    stormRemovalAt &&
+    now-stormRemovalAt>=2000
+  ){
+
+    createStormPopup();
+    createStormPopup();
+
+    stormCycleStart=now;
+    stormRemovalAt=0;
+  }
+}
+
+/* =========================
+   PAID / UNPAID
+========================= */
+
 function finishPaid(){
-  if(paid)return;
+
+  if(paid)
+    return;
 
   paid=true;
   stage=0;
 
   stopAudio();
+  stopMusic();
 
-  clearGameObjects();
+  resetGameObjects();
 
-  $('popupLayer').style.display='none';
+  questEvent('pay');
 
   show('end');
 
-  playAudio('ransom_thank_you.mp3',false);
+  playAudio(
+    'ransom_thank_you.mp3',
+    false,
+    'sfx'
+  );
 
-  setTimeout(()=>{
-    if($('end').classList.contains('active')){
-      intro();
-    }
-  },TIMINGS.thankYou);
+  setTimeout(
+    ()=>{
+      if(
+        $('end')
+          .classList
+          .contains('active')
+      ){
+
+        intro();
+
+      }
+    },
+    TIMINGS.thankYou
+  );
 }
 
 function startUnpaid(){
+
   stage=7;
-  stageStart=performance.now();
+
+  stageStart=
+    performance.now();
 
   stopAudio();
+  stopMusic();
 
-  clearGameObjects();
-
-  $('popupLayer').style.display='none';
+  resetGameObjects();
 
   show('bsod');
 
   $('bsodfill').style.width='0%';
-  $('bsodPercent').textContent='0% complete';
 
-  playAudio('ransom_attack_end.mp3',false);
+  $('bsodPercent').textContent=
+    '0% complete';
+
+  $('bsod').style.opacity='1';
+
+  playAudio(
+    'ransom_attack_end.mp3',
+    false,
+    'sfx'
+  );
 }
 
 function updateUnpaid(now){
-  const e=now-stageStart;
 
-  if(e<TIMINGS.fakeBSOD){
-    const p=clamp(e/TIMINGS.fakeBSOD,0,1);
-    const percent=Math.floor(p*100);
+  const e=
+    now-stageStart;
 
-    $('bsodfill').style.width=percent+'%';
-    $('bsodPercent').textContent=percent+'% complete';
+  if(
+    e<TIMINGS.fakeBSOD
+  ){
+
+    const p=
+      e/TIMINGS.fakeBSOD;
+
+    const percent=
+      Math.floor(p*100);
+
+    $('bsodfill').style.width=
+      percent+'%';
+
+    $('bsodPercent').textContent=
+      percent+
+      '% complete';
 
     return;
   }
 
-  if(e<TIMINGS.fakeBSOD+TIMINGS.fakeBoot){
-    const p=clamp(
-      (e-TIMINGS.fakeBSOD)/TIMINGS.fakeBoot,
-      0,
-      1
-    );
+  if(
+    e<
+    TIMINGS.fakeBSOD+
+    TIMINGS.fakeBoot
+  ){
 
-    $('bsod').style.opacity=String(1-p);
+    const p=
+      (
+        e-
+        TIMINGS.fakeBSOD
+      )/
+      TIMINGS.fakeBoot;
+
+    $('bsod').style.opacity=
+      String(1-p);
 
     return;
   }
@@ -1025,176 +2652,371 @@ function updateUnpaid(now){
   $('bsod').style.opacity='1';
 
   stage=8;
+
   stageStart=now;
+
   miniStart=now;
+
   miniNextMove=now;
+
   miniFound=0;
-  miniNodes=[];
 
   show('mini');
+
   createMiniNodes();
 
-  playAudio('ransom_theme.mp3',true);
-}function createMiniNodes(){
+  playAudio(
+    'ransom_theme.mp3',
+    true,
+    'music'
+  );
+}
+
+/* =========================
+   MINI GAME
+========================= */
+
+function createMiniNodes(){
+
   miniNodes=[];
 
-  for(let i=1;i<=TIMINGS.target;i++){
-    const node=document.createElement('button');
+  for(
+    let i=1;
+    i<=TIMINGS.target;
+    i++
+  ){
+
+    const node=
+      document.createElement('button');
 
     node.className='node';
+
     node.textContent=i;
 
     node.dataset.id=i;
 
     positionMiniNode(node);
 
-    node.addEventListener('pointerdown',()=>{
-      if(stage!==8)return;
+    node.addEventListener(
+      'pointerdown',
+      ()=>{
 
-      const id=Number(node.dataset.id);
+        if(stage!==8)
+          return;
 
-      if(id===miniFound+1){
-        miniFound++;
+        const id=
+          Number(
+            node.dataset.id
+          );
 
-        node.remove();
+        if(
+          id===
+          miniFound+1
+        ){
 
-        if(miniFound>=TIMINGS.target){
-          finishMini();
+          miniFound++;
+
+          node.remove();
+
+          if(
+            miniFound>=
+            TIMINGS.target
+          ){
+
+            finishMini();
+
+          }
+
+        }else{
+
+          miniFound=0;
+
+          toast(
+            'Wrong node!'
+          );
+
         }
-      }else{
-        miniFound=0;
-        toast('Wrong node!');
-      }
-    });
 
-    $('mini').appendChild(node);
+      }
+    );
+
+    $('mini')
+      .appendChild(node);
+
     miniNodes.push(node);
   }
 
-  miniNextMove=performance.now()+TIMINGS.miniMove;
+  miniNextMove=
+    performance.now()+
+    TIMINGS.miniMove;
 }
 
 function positionMiniNode(node){
+
   const margin=75;
 
-  const x=rand(
-    margin,
-    Math.max(margin,window.innerWidth-margin-58)
-  );
+  node.style.left=
+    rand(
+      margin,
+      Math.max(
+        margin,
+        window.innerWidth-
+        margin-
+        58
+      )
+    )+
+    'px';
 
-  const y=rand(
-    125,
-    Math.max(125,window.innerHeight-margin-58)
-  );
-
-  node.style.left=x+'px';
-  node.style.top=y+'px';
+  node.style.top=
+    rand(
+      125,
+      Math.max(
+        125,
+        window.innerHeight-
+        margin-
+        58
+      )
+    )+
+    'px';
 }
 
 function moveMiniNodes(){
-  miniNodes.forEach(node=>{
-    if(node && node.parentNode){
-      positionMiniNode(node);
+
+  miniNodes.forEach(
+    n=>{
+
+      if(
+        n &&
+        n.parentNode
+      )
+        positionMiniNode(n);
+
     }
-  });
+  );
 }
 
 function updateMini(now){
-  const elapsed=now-miniStart;
-  const left=Math.max(
-    0,
-    TIMINGS.miniGame-elapsed
-  );
+
+  const elapsed=
+    now-miniStart;
+
+  const left=
+    Math.max(
+      0,
+      TIMINGS.miniGame-
+      elapsed
+    );
 
   $('miniTimer').textContent=
-    'TIME: '+(left/1000).toFixed(1);
+    'TIME: '+
+    (left/1000).toFixed(1);
 
   $('miniStatus').textContent=
-    'Nodes found: '+miniFound+'/'+TIMINGS.target;
+    'Nodes found: '+
+    miniFound+
+    '/'+
+    TIMINGS.target;
 
-  if(now>=miniNextMove){
+  if(
+    now>=miniNextMove
+  ){
+
     moveMiniNodes();
-    miniNextMove=now+TIMINGS.miniMove;
+
+    miniNextMove=
+      now+
+      TIMINGS.miniMove;
   }
 
-  if(elapsed>=TIMINGS.miniGame){
+  if(
+    elapsed>=
+    TIMINGS.miniGame
+  ){
+
     failMini();
+
   }
 }
 
 function finishMini(){
+
+  const left=
+    Math.max(
+      0,
+      TIMINGS.miniGame-
+      (
+        performance.now()-
+        miniStart
+      )
+    );
+
   stage=0;
 
   stopAudio();
+  stopMusic();
 
-  miniNodes.forEach(n=>{
-    if(n && n.parentNode)n.remove();
-  });
+  miniNodes.forEach(
+    n=>{
+      if(
+        n &&
+        n.parentNode
+      )
+        n.remove();
+    }
+  );
 
   miniNodes=[];
 
+  questEvent('escape');
+
+  if(left<=3000){
+
+    questEvent('close');
+
+  }
+
   show('end');
 
-  playAudio('ransom_thank_you.mp3',false);
+  playAudio(
+    'ransom_thank_you.mp3',
+    false,
+    'sfx'
+  );
 
-  setTimeout(()=>{
-    if($('end').classList.contains('active')){
-      intro();
-    }
-  },TIMINGS.thankYou);
+  setTimeout(
+    ()=>{
+      if(
+        $('end')
+          .classList
+          .contains('active')
+      ){
+
+        intro();
+
+      }
+    },
+    TIMINGS.thankYou
+  );
 }
 
 function failMini(){
-  stage=7;
-  stageStart=performance.now();
 
-  miniNodes.forEach(n=>{
-    if(n && n.parentNode)n.remove();
-  });
+  stage=7;
+
+  stageStart=
+    performance.now();
+
+  miniNodes.forEach(
+    n=>{
+      if(
+        n &&
+        n.parentNode
+      )
+        n.remove();
+    }
+  );
 
   miniNodes=[];
 
   show('bsod');
 
   $('bsod').style.opacity='1';
-  $('bsodfill').style.width='0%';
-  $('bsodPercent').textContent='0% complete';
 
-  playAudio('unrecoverable.mp3',false);
+  $('bsodfill').style.width='0%';
+
+  $('bsodPercent').textContent=
+    '0% complete';
+
+  playAudio(
+    'unrecoverable.mp3',
+    false,
+    'sfx'
+  );
 }
 
-$('playBtn').addEventListener('pointerdown',()=>{
-  startGame();
-});
+/* =========================
+   GAME TOUCH / CRUCIFIX
+========================= */
 
-$('understandBtn').addEventListener('pointerdown',()=>{
-  startGame();
-});
+/*
+  DO NOT mark A-90 activity from pointerdown.
 
-$('settingsBtn').addEventListener('pointerdown',()=>{
-  toast('Settings are currently using the default configuration.');
-});
+  A tap is not movement.
 
-$('exitBtn').addEventListener('pointerdown',()=>{
-  toast('You can safely close this page.');
-});
+  During the ransom screen, tapping the empty
+  game area can still attempt the Crucifix.
+*/
 
-$('safeExit').addEventListener('pointerdown',()=>{
-  stage=0;
-  stopAudio();
-  clearGameObjects();
-  $('popupLayer').style.display='none';
-  intro();
-});
+$('game').addEventListener(
+  'pointerdown',
+  ev=>{
 
-window.addEventListener('resize',()=>{
-  if(stage===8){
-    miniNodes.forEach(positionMiniNode);
+    /*
+      Only Crucifix interaction happens here.
+      A-90 movement is handled by pointermove/
+      touchmove above.
+    */
+
+    if(
+      stage===6 &&
+      DATA.ownedItems.includes('crucifix') &&
+      ev.target===$('game')
+    ){
+
+      useCrucifix();
+
+    }
+
   }
-});
+);
+
+window.addEventListener(
+  'resize',
+  ()=>{
+
+    if(stage===8){
+
+      miniNodes.forEach(
+        positionMiniNode
+      );
+
+    }
+
+  }
+);
+
+/* =========================
+   RANDOM HELPERS
+========================= */
+
+function rand(min,max){
+
+  return (
+    Math.random()*
+    (max-min)+
+    min
+  );
+
+}
+
+function randint(min,max){
+
+  return Math.floor(
+    rand(
+      min,
+      max+1
+    )
+  );
+
+}
+
+/* =========================
+   START
+========================= */
+
+refreshCurrency();
 
 intro();
-requestAnimationFrame(update);
 
 </script>
 </body>
