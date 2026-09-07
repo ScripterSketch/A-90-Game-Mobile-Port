@@ -70,7 +70,7 @@ button:active{transform:scale(.97)}
 .goldbox{background:#e7bd00;color:#000;flex:0 0 37%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700}
 .goldbox img{width:42px;height:42px;object-fit:contain}
 .timebox{background:#9a0000;flex:1;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700}
-.coin{position:absolute;width:64px;height:64px;object-fit:contain;z-index:5;animation:coinpop .15s;cursor:pointer;pointer-events:auto}
+.coin{position:absolute;width:64px;height:64px;object-fit:contain;z-index:5;animation:coinpop .15s;cursor:pointer;pointer-events:auto;touch-action:manipulation}
 @keyframes coinpop{from{transform:scale(.4)}to{transform:scale(1)}}
 .stormpopup{z-index:2;pointer-events:none;animation:stormShake var(--shakeDur,.42s) ease-in-out infinite}
 @keyframes stormShake{0%,100%{transform:translate(0,0)}25%{transform:translate(-2px,1px)}50%{transform:translate(2px,-2px)}75%{transform:translate(-1px,2px)}}
@@ -594,12 +594,6 @@ function saveSettings(){
 
 }
 
-/*
-  Stop only the music players.
-  SFX has its own player so entering/leaving
-  the shop doesn't interfere with game sounds.
-*/
-
 function stopMusic(){
 
   if(musicFadeFrame){
@@ -664,8 +658,6 @@ function fadeInMusic(a,target){
     requestAnimationFrame(step);
 }
 
-/* MENU MUSIC */
-
 function playMenuMusic(){
 
   stopMusic();
@@ -691,15 +683,11 @@ function playMenuMusic(){
           volume
         );
       })
-      .catch(()=>{
-        /* Safari may require another user gesture */
-      });
+      .catch(()=>{});
 
   }catch{}
 
 }
-
-/* SHOP MUSIC */
 
 function playShopMusic(){
 
@@ -709,12 +697,6 @@ function playShopMusic(){
 
     const volume=
       SETTINGS.musicVolume/100;
-
-    /*
-      IMPORTANT:
-      TheShop.mp3 must be in the repository root,
-      beside intro_theme.mp3.
-    */
 
     shopMusic=
       new Audio(
@@ -740,19 +722,11 @@ function playShopMusic(){
           volume
         );
       })
-      .catch(()=>{
-        /*
-          Because openShop() is called directly
-          from the SHOP button, this normally plays
-          immediately on Safari.
-        */
-      });
+      .catch(()=>{});
 
   }catch{}
 
 }
-
-/* SFX / ONE-SHOT AUDIO */
 
 function playAudio(
   name,
@@ -784,12 +758,7 @@ function playAudio(
 
     audio.volume=volume;
 
-    audio.play().catch(()=>{
-      /*
-        Don't interrupt the game if Safari blocks
-        a sound. Music has its own player.
-      */
-    });
+    audio.play().catch(()=>{});
 
   }catch{}
 
@@ -811,8 +780,6 @@ function stopAudio(){
   audio=null;
   audioType='';
 }
-
-/* SETTINGS UI */
 
 $('musicSlider').value=
   SETTINGS.musicVolume;
@@ -1008,11 +975,6 @@ $('settings').onclick=()=>{
 };
 
 $('shopBtn').onclick=()=>{
-
-  /*
-    This is a direct user gesture, so Safari/iPadOS
-    is allowed to start the shop music here.
-  */
 
   show('shop');
 
@@ -1747,23 +1709,6 @@ function placeFace(){
    A-90 MOVEMENT DETECTION
 ========================= */
 
-/*
-  IMPORTANT:
-
-  A-90 is NOT triggered by simply touching the
-  screen.
-
-  The player must actually move.
-
-  A movement of at least 3 pixels during the
-  STOP phase sets activity=true.
-
-  This works with:
-  - iPad touch movement
-  - pointer movement
-  - mouse movement
-*/
-
 let movementX=null;
 let movementY=null;
 
@@ -1806,8 +1751,6 @@ function registerMovement(x,y){
   movementY=y;
 }
 
-/* Pointer movement */
-
 window.addEventListener(
   'pointermove',
   e=>{
@@ -1821,8 +1764,6 @@ window.addEventListener(
   {passive:true}
 );
 
-/* Mouse fallback */
-
 window.addEventListener(
   'mousemove',
   e=>{
@@ -1835,8 +1776,6 @@ window.addEventListener(
   },
   {passive:true}
 );
-
-/* Touch fallback */
 
 window.addEventListener(
   'touchmove',
@@ -1872,8 +1811,6 @@ function tick(){
   const e=
     now-stageStart;
 
-  /* FIRST A-90 APPEARANCE */
-
   if(
     stage===1 &&
     e>=TIMINGS.randomFlash
@@ -1886,8 +1823,6 @@ function tick(){
     stageStart=now;
 
   }
-
-  /* MOVE A-90 TO CENTER */
 
   else if(
     stage===2 &&
@@ -1908,32 +1843,16 @@ function tick(){
 
     stageStart=now;
 
-    /*
-      This is the important reset.
-      The player must move AFTER A-90 reaches
-      the STOP phase.
-    */
-
     activity=false;
 
     resetMovementTracking();
 
   }
 
-  /* A-90 STOP / MOVEMENT CHECK */
-
   else if(
     stage===3 &&
     e>=TIMINGS.stopWarning
   ){
-
-    /*
-      If the player stayed completely still,
-      A-90 leaves and the game returns to menu.
-
-      If the player moved, A-90 catches them
-      and the attack sequence begins.
-    */
 
     if(!activity){
 
@@ -1950,11 +1869,6 @@ function tick(){
 
       return;
     }
-
-    /*
-      MOVEMENT DETECTED:
-      A-90 catches the player.
-    */
 
     $('stopFace').style.display='none';
 
@@ -1977,8 +1891,6 @@ function tick(){
     stageStart=now;
 
   }
-
-  /* ATTACK */
 
   else if(stage===4){
 
@@ -2013,8 +1925,6 @@ function tick(){
     }
 
   }
-
-  /* DOWNLOAD */
 
   else if(stage===5){
 
@@ -2058,23 +1968,17 @@ function tick(){
 
   }
 
-  /* RANSOM */
-
   else if(stage===6){
 
     updatePopupStage(now);
 
   }
 
-  /* UNPAID */
-
   else if(stage===7){
 
     updateUnpaid(now);
 
   }
-
-  /* MINI GAME */
 
   else if(stage===8){
 
@@ -2109,11 +2013,6 @@ function beginRansom(){
   spawnCoins();
 
   startDecorativeStorm();
-
-  /*
-    The ransom music uses the SFX/music player
-    separately from menu/shop music.
-  */
 
   stopMusic();
 
@@ -2188,11 +2087,6 @@ function createMainPopup(){
 
   `;
 
-  /*
-    Clicking the ransom popup itself does NOT
-    count as collecting a coin.
-  */
-
   p.addEventListener(
     'pointerdown',
     ev=>ev.stopPropagation()
@@ -2240,15 +2134,10 @@ function spawnCoins(){
     c.style.top=
       rand(7,84)+'vh';
 
-    c.addEventListener(
-      'pointerdown',
-      ev=>{
-        ev.stopPropagation();
-      }
-    );
+    /* ONE CLICK / ONE TAP COLLECTS THE COIN */
 
     c.addEventListener(
-      'dblclick',
+      'pointerdown',
       ev=>{
 
         ev.stopPropagation();
@@ -2938,24 +2827,9 @@ function failMini(){
    GAME TOUCH / CRUCIFIX
 ========================= */
 
-/*
-  DO NOT mark A-90 activity from pointerdown.
-
-  A tap is not movement.
-
-  During the ransom screen, tapping the empty
-  game area can still attempt the Crucifix.
-*/
-
 $('game').addEventListener(
   'pointerdown',
   ev=>{
-
-    /*
-      Only Crucifix interaction happens here.
-      A-90 movement is handled by pointermove/
-      touchmove above.
-    */
 
     if(
       stage===6 &&
