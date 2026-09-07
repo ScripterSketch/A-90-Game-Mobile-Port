@@ -1,0 +1,9 @@
+{
+  "name": "The A90 Game \u2014 Mobile",
+  "short_name": "A90 Game",
+  "start_url": "./index.html",
+  "display": "fullscreen",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "any"
+}
