@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>The A90 Game — Mobile</title>
+<link rel="manifest" href="manifest.json">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;font-family:Arial,Helvetica,sans-serif}
+body{touch-action:none;color:#fff}
+#app{position:fixed;inset:0;overflow:hidden;background:#000}
+.screen{position:absolute;inset:0;display:none;align-items:center;justify-content:center}
+.screen.active{display:flex}
+#intro{background:#000;flex-direction:column}
+.credit{position:absolute;top:12%;width:100%;text-align:center;font-weight:700}
+.credit .by{font-size:clamp(18px,4vw,32px)}
+.credit .name{font-size:clamp(26px,6vw,48px)}
+.credit .ninety{font-size:clamp(80px,18vw,150px);line-height:.8}
+#menu{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);display:none;gap:12px;flex-direction:column;width:min(320px,72vw)}
+button{font:700 18px Arial;border:1px solid #777;background:#050505;color:#fff;padding:14px 18px;border-radius:4px}
+button:active{transform:scale(.97)}
+#menu button{border-color:#b00000;background:#050505}
+#warning{background:#000;z-index:30;padding:24px}
+.dialog{width:min(650px,92vw);background:#050505;border:1px solid #555;padding:20px;text-align:center}
+.dialog h1{margin:0 0 12px;color:red;font-size:clamp(26px,7vw,44px)}
+.dialog .icons{display:flex;justify-content:center;gap:14px;margin-bottom:12px}
+.dialog img{width:76px;height:76px;object-fit:contain}
+.dialog p{line-height:1.45;color:#ddd;font-size:15px}
+.dialog .actions{display:flex;gap:10px;justify-content:center;margin-top:18px}
+#game{background:transparent}
+#face{position:absolute;width:24vmin;height:24vmin;max-width:250px;max-height:250px;object-fit:contain;display:none}
+#stopFace{position:absolute;width:22vmin;height:22vmin;max-width:215px;max-height:215px;object-fit:contain;display:none}
+#attackFace{position:absolute;width:55vmin;height:55vmin;max-width:720px;max-height:720px;object-fit:contain;display:none}
+#download{display:none;flex-direction:column;align-items:center;gap:10px;width:min(680px,72vw);font-weight:700}
+#bar{width:100%;height:38px;border:2px solid #ddd;background:#111;padding:4px}
+#fill{height:100%;width:0;background:#fff}
+#pct{font-size:20px}
+#popupLayer{position:absolute;inset:0;display:none}
+.popup{position:absolute;background:#070707;border:2px solid #555;box-shadow:0 0 0 1px #111;overflow:hidden}
+.mainpopup{width:min(360px,88vw);height:226px;background:#d00000;border-color:#500}
+.mainHead{height:72px;background:#d00000;display:flex;align-items:center;padding:4px}
+.mainHead img{width:74px;height:64px;object-fit:contain}
+.mainHead b{font-size:15px;line-height:1.05}
+.mainBody{height:86px;margin:3px 4px;background:#090909;display:flex;align-items:center;justify-content:center;text-align:center;padding:5px;font-size:9px}
+.payrow{display:flex;height:57px;margin:0 4px 4px;gap:5px}
+.goldbox{background:#e7bd00;color:#000;flex:0 0 37%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700}
+.goldbox img{width:42px;height:42px;object-fit:contain}
+.timebox{background:#9a0000;flex:1;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700}
+.glitch{padding:8px;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:700;font-size:12px}
+.stripe{position:absolute;height:5px}
+.blackmsg{height:100%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;text-align:center;padding:8px}
+.crucifix{width:100%;height:100%;object-fit:contain}
+.coin{position:absolute;width:64px;height:64px;object-fit:contain;z-index:5;animation:coinpop .15s}
+@keyframes coinpop{from{transform:scale(.4)}to{transform:scale(1)}}
+#bsod{background:#005bb1;z-index:20;flex-direction:column;align-items:flex-start;justify-content:flex-start;padding:8vh 10vw}
+#bsod .sad{font-size:clamp(70px,18vw,150px);font-weight:300}
+#bsod .msg{font-size:clamp(18px,4vw,28px);max-width:900px;line-height:1.35}
+#bsod .percent{font-size:20px;margin-top:30px}
+#bsodbar{width:min(720px,80vw);height:22px;border:1px solid #fff;margin-top:12px}
+#bsodfill{height:100%;width:0;background:#fff}
+#bsod .code{margin-top:20px;font-size:14px}
+#mini{background:#0c0c0c;z-index:25;display:none}
+#mini h2{position:absolute;top:25px;left:0;width:100%;text-align:center;font-size:28px}
+#mini .timer{position:absolute;top:75px;width:100%;text-align:center;font-size:18px}
+#mini .status{position:absolute;bottom:25px;width:100%;text-align:center;color:#bbb}
+.node{position:absolute;width:58px;height:58px;padding:0;border-radius:50%;background:#121212;border:2px solid #888;font-size:18px}
+#end{background:#3bc700;z-index:28;display:none}
+.thanks{width:360px;height:226px;max-width:85vw;max-height:54vw;background:linear-gradient(#63e700 0 30%,#39c700 30% 65%,#1f910c 65%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.thanks h1{font-size:31px;text-shadow:3px 3px #234118;margin:0}
+.thanks .badge{position:absolute;font-size:64px}
+#toast{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);background:#111;border:1px solid #555;padding:8px 12px;border-radius:4px;display:none;z-index:100}
+#safeExit{position:absolute;right:12px;top:12px;z-index:100;background:#111;border-color:#666;font-size:13px;padding:8px 10px}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="intro" class="screen active">
+    <div class="credit" id="credits"></div>
+    <div id="menu">
+      <button id="play">PLAY</button>
+      <button id="settings">SETTINGS</button>
+      <button id="exit">EXIT</button>
+    </div>
+  </div>
+
+  <div id="warning" class="screen">
+    <div class="dialog">
+      <div class="icons"><img src="ransom_idle.png"><img src="stop.png"></div>
+      <h1>WARNING</h1>
+      <p>This mobile recreation is a visual game only. It does <b>not</b> modify your files, lock your device, infect phones, change your wallpaper, or interfere with other apps.</p>
+      <div class="actions">
+        <button id="understand">I UNDERSTAND</button>
+        <button id="back">GO BACK</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="game" class="screen">
+    <img id="face" src="ransom_idle.png">
+    <img id="stopFace" src="stop.png">
+    <img id="attackFace" src="ransom_attack.png">
+    <div id="download">
+      <div>DOWNLOADING RANSOM...</div>
+      <div id="bar"><div id="fill"></div></div>
+      <div id="pct">0%</div>
+    </div>
+    <div id="popupLayer"></div>
+  </div>
+
+  <div id="bsod" class="screen">
+    <div class="sad" id="bsodface">:(</div>
+    <div class="msg" id="bsodmsg">Your device ran into a Ransom error and needs to recover. We're collecting some error info, and then this screen will close.</div>
+    <div class="percent" id="bsodpct">0% complete</div>
+    <div id="bsodbar"><div id="bsodfill"></div></div>
+    <div class="code" id="bsodcode">Stop code: RANSOM_PAYMENT_TIMEOUT</div>
+  </div>
+
+  <div id="mini" class="screen">
+    <h2>SIGNAL RECOVERY</h2>
+    <div class="timer" id="minitime">15.0 seconds</div>
+    <div class="status" id="ministatus">Select nodes 1-6 in order</div>
+    <div id="nodes"></div>
+  </div>
+
+  <div id="end" class="screen">
+    <div class="thanks"><h1>THANK&nbsp;&nbsp;YOU</h1><div class="badge">👍</div></div>
+  </div>
+
+  <button id="safeExit">EXIT</button>
+  <div id="toast"></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const screens={intro:$('intro'),warning:$('warning'),game:$('game'),bsod:$('bsod'),mini:$('mini'),end:$('end')};
+const assets='';
+let audio=null, stage=0, stageStart=0, raf=0, activity=false, paid=false;
+let balance=500, remaining=125, popupSchedule=[
+  [650,'YOURGOLDAREBELONGTOUS','black'],[1200,'SIGNAL ERROR','glitch'],
+  [1800,'SIGNAL ERROR','glitch'],[2500,'YOURGOLDAREBELONGTOUS','image'],
+  [3300,'SIGNAL ERROR','glitch'],[5600,'YOURGOLDAREBELONGTOUS','black'],
+  [7100,'SIGNAL ERROR','glitch'],[9000,'SIGNAL ERROR','glitch']
+];
+let nextPopup=0, nodes=[], nextNode=1, miniDeadline=0;
+
+function show(s){Object.values(screens).forEach(x=>x.classList.remove('active'));s.classList.add('active')}
+function playAudio(name, loop=false){
+  try{ if(audio){audio.pause();audio.currentTime=0} audio=new Audio(assets+name);audio.loop=loop;audio.volume=1;audio.play().catch(()=>toast('Tap PLAY again if audio is blocked by Safari.')) }catch{}
+}
+function stopAudio(){if(audio){audio.pause();audio.currentTime=0}}
+function toast(t){$('toast').textContent=t;$('toast').style.display='block';clearTimeout(window.tt);window.tt=setTimeout(()=>$('toast').style.display='none',1600)}
+
+function intro(){
+  $('credits').innerHTML='';
+  setTimeout(()=>$('credits').innerHTML='<div class="by">By</div>',3700);
+  setTimeout(()=>$('credits').innerHTML='<div class="name">Majed</div>',7400);
+  setTimeout(()=>$('credits').innerHTML='<div class="ninety">90</div>',10400);
+  setTimeout(()=>{$('credits').innerHTML='';$('menu').style.display='flex'},13900);
+  playAudio('intro_theme.mp3',false);
+}
+$('play').onclick=()=>show(screens.warning);
+$('back').onclick=()=>{show(screens.intro);$('menu').style.display='flex'};
+$('understand').onclick=()=>startGame();
+$('settings').onclick=()=>toast('Mobile build: settings are simplified for touch controls.');
+$('exit').onclick=()=>toast('You can close this Safari tab or Home Screen app.');
+$('safeExit').onclick=()=>{stopAudio();cancelAnimationFrame(raf);show(screens.intro);$('menu').style.display='flex';resetVisuals()};
+
+function resetVisuals(){
+  $('face').style.display='none';$('stopFace').style.display='none';$('attackFace').style.display='none';
+  $('download').style.display='none';$('popupLayer').style.display='none';$('bsod').classList.remove('active');
+  $('mini').classList.remove('active');$('end').classList.remove('active');$('game').classList.remove('active');
+  $('popupLayer').innerHTML='';document.querySelectorAll('.coin').forEach(x=>x.remove());
+}
+
+function startGame(){
+  show(screens.game);$('menu').style.display='none';resetVisuals();show(screens.game);
+  stage=1;stageStart=performance.now();activity=false;paid=false;nextPopup=0;balance=500;remaining=125;
+  playAudio('ransom_appear.mp3');placeFace();
+  listenActivity();tick();
+}
+function placeFace(){
+  const f=$('face');f.style.display='block';f.style.width='24vmin';f.style.height='24vmin';
+  f.style.left=(8+Math.random()*72)+'vw';f.style.top=(8+Math.random()*72)+'vh';
+}
+function centerStop(){
+  const f=$('stopFace');f.style.display='block';f.style.left='50%';f.style.top='50%';f.style.transform='translate(-50%,-50%)';
+}
+function listenActivity(){
+  const mark=()=>activity=true;
+  window.addEventListener('pointerdown',mark,{once:false});
+  window.addEventListener('pointermove',mark,{once:false});
+  window.addEventListener('touchstart',mark,{once:false,passive:true});
+}
+function tick(){
+  const now=performance.now(), e=now-stageStart;
+  if(stage===1 && e>=300){placeFace();stage=2;stageStart=now}
+  else if(stage===2 && e>=300){$('face').style.display='none';centerStop();stage=3;stageStart=now;activity=false}
+  else if(stage===3 && e>=200){
+    if(!activity){resetToMenu('You stayed still. A90 left.')} else {
+      $('stopFace').style.display='none';$('attackFace').style.display='block';$('attackFace').style.left='50%';$('attackFace').style.top='50%';$('attackFace').style.transform='translate(-50%,-50%)';
+      $('attackFace').style.width='55vmin';$('attackFace').style.height='55vmin';playAudio('ransom_attack_audio.mp3');
+      stage=4;stageStart=now;
+    }
+  } else if(stage===4){
+    const p=Math.min(1,e/900), size=55+27*p;
+    $('attackFace').style.width=size+'vmin';$('attackFace').style.height=size+'vmin';
+    if(e>=900){$('attackFace').style.display='none';$('download').style.display='flex';stage=5;stageStart=now}
+  } else if(stage===5){
+    const p=Math.min(1,e/1672), eased=1-Math.pow(1-p,2);
+    $('fill').style.width=(eased*100)+'%';$('pct').textContent=Math.floor(eased*100)+'%';
+    if(e>=1672){$('download').style.display='none';$('game').style.background='#fff';stage=6;stageStart=now}
+  } else if(stage===6 && e>=100){
+    $('game').style.background='transparent';startPopupStorm();stage=7;stageStart=now;
+  } else if(stage===7){
+    updatePopupStage(now,e);
+  } else if(stage===8){
+    // Paid ending: center the ransom window, then thank-you.
+    const p=Math.min(1,e/850), pop=document.querySelector('.mainpopup');
+    if(pop){pop.style.left=(50+(0-50)*p)+'%';pop.style.top=(50+(0-50)*p)+'%';pop.style.transform='translate(-50%,-50%)'}
+    if(e>=850){showThanks();stage=9;stageStart=now}
+  } else if(stage===9 && e>=4154){resetToMenu();return}
+  raf=requestAnimationFrame(tick);
+}
+function startPopupStorm(){
+  $('popupLayer').style.display='block';$('popupLayer').innerHTML='';
+  const p=document.createElement('div');p.className='popup mainpopup';p.style.left=(10+Math.random()*70)+'vw';p.style.top=(10+Math.random()*65)+'vh';
+  p.innerHTML='<div class="mainHead"><img src="ransom_idle.png"><b>YOUR ITEMS<br>HAVE BEEN<br>ENCRYPTED</b></div><div class="mainBody">IF YOU DO NOT PAY THIS RANSOM<br>BEFORE THE TIMER ENDS, YOUR ITEMS<br>WILL BE UNRECOVERABLE BY ANY MEANS.</div><div class="payrow"><div class="goldbox"><span id="goldnum">500</span><img src="gold.png"></div><div class="timebox" id="timer">TIME: 02:05</div></div>';
+  p.onclick=()=>collectCoin();
+  $('popupLayer').appendChild(p);
+  playAudio('ransom_theme.mp3',true);
+  // Mobile equivalent of the original coin hunt: visible touch coins.
+  spawnCoins();
+}
+function spawnCoins(){
+  for(let i=0;i<18;i++){
+    const c=document.createElement('img');c.className='coin';c.src=assets+(['gold.png','coin_blue.png','coin_red.png'][i%3]);
+    c.style.left=(3+Math.random()*91)+'vw';c.style.top=(7+Math.random()*84)+'vh';
+    const value=i%3===0?50:(i%3===1?25:-25);
+    c.dataset.value=value;
+    c.onclick=(ev)=>{ev.stopPropagation();const v=+c.dataset.value;balance=Math.max(0,balance+v);$('goldnum').textContent=balance;c.remove();toast((v>0?'+':'')+v+' coins');if(balance>=500) paid=true};
+    $('popupLayer').appendChild(c);
+  }
+}
+function collectCoin(){if(balance>=500)paid=true}
+function updatePopupStage(now,e){
+  remaining=Math.max(0,125-Math.ceil(e/1000));
+  const sec=String(remaining%60).padStart(2,'0'), min=String(Math.floor(remaining/60)).padStart(2,'0');
+  const t=$('timer');if(t)t.textContent='TIME: '+min+':'+sec;
+  while(nextPopup<popupSchedule.length && e>=popupSchedule[nextPopup][0]){makeGlitch(popupSchedule[nextPopup][1],popupSchedule[nextPopup][2]);nextPopup++}
+  if(paid && e>560){stage=8;stageStart=now;document.querySelectorAll('.coin').forEach(x=>x.remove());return}
+  if(e>=125000){startUnpaid();return}
+}
+function makeGlitch(title,mode){
+  const p=document.createElement('div');p.className='popup glitch';p.style.width=(230+Math.random()*100)+'px';p.style.height=(105+Math.random()*75)+'px';p.style.left=(Math.random()*78)+'vw';p.style.top=(Math.random()*78)+'vh';
+  if(mode==='image')p.innerHTML='<img class="crucifix" src="ransom_crucifix.png">';
+  else if(mode==='black')p.innerHTML='<div class="blackmsg">'+title+'<br><br>0x'+Math.floor(Math.random()*0xffffffff).toString(16).padStart(8,'0')+'</div>';
+  else {
+    for(let i=0;i<12;i++){const s=document.createElement('div');s.className='stripe';s.style.left=Math.random()*90+'%';s.style.top=Math.random()*95+'%';s.style.width=(10+Math.random()*65)+'%';s.style.background=['#b023ff','#14eb5f','#2378ff','#f51923','#fff','#050505'][i%6];p.appendChild(s)}
+    const t=document.createElement('div');t.textContent=title+'\\n0x'+Math.floor(Math.random()*0xffffffff).toString(16);t.style.whiteSpace='pre-line';p.appendChild(t)
+  }
+  $('popupLayer').appendChild(p);setTimeout(()=>p.remove(),380+Math.random()*380);
+}
+function startUnpaid(){
+  stopAudio();playAudio('ransom_attack_end.mp3');$('popupLayer').style.display='none';document.querySelectorAll('.coin').forEach(x=>x.remove());
+  $('game').style.background='rgb(205,0,0)';$('attackFace').style.display='block';$('attackFace').style.left='50%';$('attackFace').style.top='50%';$('attackFace').style.transform='translate(-50%,-50%)';$('attackFace').style.width='72vmin';$('attackFace').style.height='72vmin';
+  stage=10;stageStart=performance.now();
+}
+function startBsod(){
+  $('attackFace').style.display='none';show(screens.bsod);stage=11;stageStart=performance.now();$('bsodpct').textContent='0% complete';$('bsodfill').style.width='0';$('bsodface').textContent=':(';$('bsodmsg').textContent="Your device ran into a Ransom error and needs to recover. We're collecting some error info, and then this screen will close.";$('bsodcode').textContent='Stop code: RANSOM_PAYMENT_TIMEOUT';playAudio('ransom_attack_end.mp3',true);
+  bsodTick();
+}
+function bsodTick(){
+  const now=performance.now(),e=now-stageStart,p=Math.min(1,e/3200),ease=1-Math.pow(1-p,1.65),pct=Math.floor(ease*100);
+  $('bsodpct').textContent=pct+'% complete';$('bsodfill').style.width=pct+'%';
+  if(pct>=90){$('bsod').style.background=(Math.floor(now/80)%2?'rgb(160,0,0)':'rgb(40,0,0)');$('bsodface').textContent=':)';$('bsodmsg').textContent='Ransom has taken control.';$('bsodcode').textContent='Stop code: A90_SIGNAL_LOCK'}
+  if(e>=3200){stopAudio();show(screens.mini);startMini();return}
+  requestAnimationFrame(bsodTick);
+}
+function startMini(){
+  nextNode=1;miniDeadline=performance.now()+15000;nodes=[];$('nodes').innerHTML='';$('ministatus').textContent='Select nodes 1-6 in order';
+  for(let i=1;i<=6;i++){const b=document.createElement('button');b.className='node';b.textContent=i;b.dataset.n=i;b.onclick=()=>nodeClick(b);$('nodes').appendChild(b);nodes.push(b)}
+  moveNodes();setTimeout(moveNodes,1150);setTimeout(moveNodes,2300);setTimeout(moveNodes,3450);setTimeout(moveNodes,4600);miniTick();
+}
+function moveNodes(){
+  nodes.filter(x=>x.style.display!=='none').forEach(b=>{b.style.left=(8+Math.random()*80)+'vw';b.style.top=(15+Math.random()*70)+'vh'})
+}
+function nodeClick(b){
+  const n=+b.dataset.n;
+  if(n===nextNode){b.style.display='none';nextNode++;$('ministatus').textContent=n===6?'SIGNAL RESTORED':'Node '+n+' accepted';if(nextNode===7){playAudio('ransom_thank_you.mp3');setTimeout(()=>resetToMenu(),2200)}}
+  else $('ministatus').textContent='Next node: '+nextNode;
+}
+function miniTick(){
+  const left=Math.max(0,miniDeadline-performance.now());$('minitime').textContent=(left/1000).toFixed(1)+' seconds';
+  if(left<=0){$('ministatus').textContent='RECOVERY FAILED';playAudio('ransom_attack_end.mp3');setTimeout(()=>resetToMenu(),1824);return}
+  requestAnimationFrame(miniTick);
+}
+function showThanks(){stopAudio();playAudio('ransom_thank_you.mp3');show(screens.end)}
+function resetToMenu(msg=''){
+  cancelAnimationFrame(raf);stopAudio();resetVisuals();$('game').style.background='transparent';show(screens.intro);$('menu').style.display='flex';if(msg)toast(msg);
+}
+$('attackFace').addEventListener('click',()=>{});
+$('game').addEventListener('pointerdown',()=>{activity=true});
+$('game').addEventListener('pointermove',()=>{activity=true});
+setTimeout(intro,50);
+
+// The original has a 33ms update loop; keep the mobile version responsive at ~60fps.
+</script>
+</body>
+</html>
