@@ -392,6 +392,7 @@ let balance=500;
 let remaining=90;
 
 let riserPlayed=false;
+let coinsCollected=0;
 
 let stormPopups=[];
 let stormCycleStart=0;
@@ -976,7 +977,7 @@ const SHOP={
     {
       id:'crucifix',
       name:'Crucifix',
-      price:400,
+      price:475,
       desc:'A purely visual item used in the Ransom encounter.'
     }
 
@@ -1270,6 +1271,38 @@ const QUEST_POOL=[
     desc:'Successfully pay the ransom using the scattered coins.',
     reward:100,
     type:'pay'
+  },
+
+  {
+    id:'coin_collector',
+    title:'Coin Collector',
+    desc:'Collect all 18 coins during the ransom encounter.',
+    reward:50,
+    type:'coins'
+  },
+
+  {
+    id:'signal_recovered',
+    title:'Signal Recovered',
+    desc:'Complete Signal Recovery.',
+    reward:25,
+    type:'signal'
+  },
+
+  {
+    id:'a90_survivor',
+    title:'A-90 Survivor',
+    desc:'Survive an A-90 encounter without using the Crucifix.',
+    reward:50,
+    type:'a90_survivor'
+  },
+
+  {
+    id:'ransom_survivor',
+    title:'Ransom Survivor',
+    desc:'Escape the ransom sequence without paying the ransom.',
+    reward:50,
+    type:'ransom_survivor'
   }
 
 ];
@@ -1603,6 +1636,7 @@ function startGame(){
   remaining=90;
 
   riserPlayed=false;
+  coinsCollected=0;
 
   $('face').style.display='none';
   $('stopFace').style.display='none';
@@ -1778,6 +1812,8 @@ function tick(){
         'You stayed still. A90 left.'
       );
 
+      questEvent('a90_survivor');
+
       stage=0;
 
       setTimeout(
@@ -1919,6 +1955,7 @@ function beginRansom(){
   remaining=90;
 
   riserPlayed=false;
+  coinsCollected=0;
 
   $('popupLayer').style.display='block';
 
@@ -2091,9 +2128,17 @@ function collectCoin(c){
 
   c.remove();
 
+  coinsCollected++;
+
   toast(
     '-'+value+' ransom'
   );
+
+  if(coinsCollected>=18){
+
+    questEvent('coins');
+
+  }
 
   if(balance<=0){
 
@@ -2382,6 +2427,8 @@ function startUnpaid(){
 
   stage=7;
 
+  questEvent('ransom_survivor');
+
   stageStart=
     performance.now();
 
@@ -2665,6 +2712,7 @@ function finishMini(){
   miniNodes=[];
 
   questEvent('escape');
+  questEvent('signal');
 
   if(left<=3000){
 
