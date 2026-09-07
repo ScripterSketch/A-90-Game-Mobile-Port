@@ -356,3 +356,846 @@ setTimeout(intro,50);
 </script>
 </body>
 </html>
+<body>
+<div id="app">
+
+  <div id="intro" class="screen active">
+    <div class="credit">
+      <div class="by">By</div>
+      <div class="name">Majed</div>
+      <div class="ninety">90</div>
+    </div>
+  </div>
+
+  <div id="menu" class="screen">
+    <button id="playBtn">PLAY</button>
+    <button id="settingsBtn">SETTINGS</button>
+    <button id="exitBtn">EXIT</button>
+  </div>
+
+  <div id="warning" class="screen">
+    <div class="dialog">
+      <h1>WARNING</h1>
+
+      <div class="icons">
+        <img src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/a90_app.ico?v=2">
+        <img src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/stop.png?v=2">
+      </div>
+
+      <p>
+        This game contains flashing images, sudden visual effects,
+        loud sounds, and simulated system-error effects.
+      </p>
+
+      <p>
+        Nothing in this mobile version modifies your device, files,
+        apps, USB devices, or operating system.
+      </p>
+
+      <div class="actions">
+        <button id="understandBtn">I UNDERSTAND</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="game" class="screen">
+    <img id="face"
+      src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/ransom_idle.png?v=2">
+
+    <img id="stopFace"
+      src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/stop.png?v=2">
+
+    <img id="attackFace"
+      src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/ransom_attack.png?v=2">
+
+    <div id="download">
+      <div>DOWNLOADING...</div>
+      <div id="bar">
+        <div id="fill"></div>
+      </div>
+      <div id="pct">0%</div>
+    </div>
+
+    <div id="popupLayer"></div>
+
+    <button id="safeExit">EXIT</button>
+  </div>
+
+  <div id="bsod" class="screen">
+    <div class="sad">:(</div>
+
+    <div class="msg">
+      Your PC ran into a problem and needs to restart.
+      We're just collecting some error info, and then we'll restart for you.
+    </div>
+
+    <div class="percent" id="bsodPercent">0% complete</div>
+
+    <div id="bsodbar">
+      <div id="bsodfill"></div>
+    </div>
+
+    <div class="code">
+      Stop code: A90_ENCRYPTION_FAILURE
+    </div>
+  </div>
+
+  <div id="mini" class="screen">
+    <h2>SIGNAL RECOVERY</h2>
+
+    <div class="timer" id="miniTimer">
+      TIME: 15.0
+    </div>
+
+    <div class="status" id="miniStatus">
+      Find the nodes before the signal is lost.
+    </div>
+  </div>
+
+  <div id="end" class="screen">
+    <div class="thanks">
+      <img
+        src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/Thank_you.png?v=2">
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+</div>
+
+<script>
+const assets='https://scriptersketch.github.io/A-90-Game-Mobile-Port/';
+
+const $=id=>document.getElementById(id);
+
+let audio=null;
+let stage=0;
+let stageStart=0;
+let activity=false;
+let paid=false;
+let balance=500;
+let remaining=125;
+let riserPlayed=false;
+
+let stormPopups=[];
+let stormCycleStart=0;
+let stormRemovalAt=0;
+
+let miniNodes=[];
+let miniStart=0;
+let miniNextMove=0;
+let miniFound=0;
+
+const SETTINGS={
+  hideCoins:true,
+  coinAppear:55000,
+  ransomAppear:125000,
+  coinRequirement:500,
+  vaultDepth:7,
+  collectMode:'Double-click',
+  intenseCrash:false
+};
+
+const TIMINGS={
+  randomFlash:300,
+  centerFlash:300,
+  stopWarning:200,
+  attackDuration:900,
+  download:1672,
+  whiteFlash:100,
+  attackEnd:1824,
+  fakeBSOD:3200,
+  fakeBoot:2200,
+  reveal:950,
+  miniGame:15000,
+  target:6,
+  miniMove:1150,
+  distortionFrame:70,
+  safeCrash:5200,
+  thankYou:4154,
+  movementTolerance:3,
+  popupTeleportMin:560,
+  popupTeleportMax:1250
+};
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
+  $(id).classList.add('active');
+}
+
+function hide(id){
+  $(id).classList.remove('active');
+}
+
+function toast(msg){
+  const t=$('toast');
+  if(!t)return;
+  t.textContent=msg;
+  t.style.display='block';
+  clearTimeout(t._timer);
+  t._timer=setTimeout(()=>t.style.display='none',2200);
+}
+
+function playAudio(name,loop=false){
+  try{
+    if(audio){
+      audio.pause();
+      audio.currentTime=0;
+    }
+
+    audio=new Audio(assets+name+'?v=2');
+    audio.loop=loop;
+    audio.volume=1;
+
+    audio.play().catch(()=>{
+      toast('Tap PLAY again if audio is blocked by Safari.');
+    });
+  }catch{}
+}
+
+function stopAudio(){
+  try{
+    if(audio){
+      audio.pause();
+      audio.currentTime=0;
+    }
+  }catch{}
+  audio=null;
+}
+
+function rand(min,max){
+  return Math.random()*(max-min)+min;
+}
+
+function randint(min,max){
+  return Math.floor(rand(min,max+1));
+}
+
+function clamp(v,a,b){
+  return Math.max(a,Math.min(b,v));
+}
+
+function clearGameObjects(){
+  $('popupLayer').innerHTML='';
+  stormPopups=[];
+  document.querySelectorAll('.coin').forEach(c=>c.remove());
+  document.querySelectorAll('.node').forEach(n=>n.remove());
+}
+
+function intro(){
+  show('intro');
+
+  $('menu').style.display='none';
+
+  setTimeout(()=>{
+    const by=document.querySelector('.credit .by');
+    const name=document.querySelector('.credit .name');
+    const ninety=document.querySelector('.credit .ninety');
+
+    if(by)by.style.display='block';
+    if(name)name.style.display='none';
+    if(ninety)ninety.style.display='none';
+  },0);
+
+  setTimeout(()=>{
+    const name=document.querySelector('.credit .name');
+    if(name)name.style.display='block';
+  },3700);
+
+  setTimeout(()=>{
+    const credit=document.querySelector('.credit');
+    if(credit)credit.style.display='none';
+    $('menu').style.display='flex';
+    show('menu');
+  },10400);
+
+  setTimeout(()=>{
+    if($('menu').style.display!=='none'){
+      show('menu');
+    }
+  },13900);
+}
+
+function startGame(){
+  clearGameObjects();
+
+  show('game');
+
+  stage=1;
+  stageStart=performance.now();
+  activity=false;
+  paid=false;
+  balance=500;
+  remaining=90;
+  riserPlayed=false;
+  stormPopups=[];
+  stormCycleStart=0;
+  stormRemovalAt=0;
+
+  $('face').style.display='none';
+  $('stopFace').style.display='none';
+  $('attackFace').style.display='none';
+  $('download').style.display='none';
+
+  playAudio('intro_theme.mp3',false);
+}
+
+function update(){
+  requestAnimationFrame(update);
+
+  if(stage===0)return;
+
+  const now=performance.now();
+  const e=now-stageStart;
+
+  if(stage===1){
+    if(e>=TIMINGS.randomFlash){
+      $('face').style.display='block';
+      stage=2;
+      stageStart=now;
+    }
+  }
+
+  else if(stage===2){
+    if(e>=TIMINGS.centerFlash){
+      $('face').style.display='none';
+      $('stopFace').style.display='block';
+      stage=3;
+      stageStart=now;
+    }
+  }
+
+  else if(stage===3){
+    if(e>=TIMINGS.stopWarning){
+      $('stopFace').style.display='none';
+      $('attackFace').style.display='block';
+
+      stage=4;
+      stageStart=now;
+    }
+  }
+
+  else if(stage===4){
+    const p=clamp(e/TIMINGS.attackDuration,0,1);
+    const size=420+(630-420)*p;
+
+    $('attackFace').style.width=size+'px';
+    $('attackFace').style.height=size+'px';
+
+    if(e>=TIMINGS.attackDuration){
+      $('attackFace').style.display='none';
+      $('download').style.display='flex';
+
+      stage=5;
+      stageStart=now;
+    }
+  }
+
+  else if(stage===5){
+    const p=clamp(e/TIMINGS.download,0,1);
+    $('fill').style.width=(p*100)+'%';
+    $('pct').textContent=Math.floor(p*100)+'%';
+
+    if(e>=TIMINGS.download){
+      $('download').style.display='none';
+
+      document.body.style.background='#fff';
+
+      setTimeout(()=>{
+        document.body.style.background='#000';
+        beginRansom();
+      },TIMINGS.whiteFlash);
+    }
+  }
+
+  else if(stage===6){
+    updatePopupStage(now);
+  }
+
+  else if(stage===7){
+    updateUnpaid(now);
+  }
+
+  else if(stage===8){
+    updateMini(now);
+  }
+}
+
+function beginRansom(){
+  stage=6;
+  stageStart=performance.now();
+
+  remaining=90;
+  riserPlayed=false;
+
+  $('popupLayer').style.display='block';
+
+  createMainPopup();
+
+  if(!SETTINGS.hideCoins){
+    spawnCoins();
+  }
+
+  stormCycleStart=performance.now();
+  stormRemovalAt=0;
+
+  playAudio('ransom_theme.mp3',true);
+}
+
+function createMainPopup(){
+  const layer=$('popupLayer');
+
+  const popup=document.createElement('div');
+  popup.className='popup mainpopup';
+
+  popup.style.left='50%';
+  popup.style.top='50%';
+  popup.style.transform='translate(-50%,-50%)';
+  popup.style.zIndex='10';
+
+  popup.innerHTML=`
+    <div class="mainHead">
+      <img src="${assets}ransom_idle.png?v=2">
+      <b>
+        A90<br>
+        SECURITY ALERT
+      </b>
+    </div>
+
+    <div class="mainBody">
+      <div>
+        YOUR ITEMS HAVE BEEN ENCRYPTED<br><br>
+        PAY THE RANSOM TO RECOVER THEM.
+      </div>
+    </div>
+
+    <div class="payrow">
+      <div class="goldbox">
+        <img src="${assets}gold.ico?v=2">
+        <span id="balanceText">500</span>
+      </div>
+
+      <div class="timebox">
+        <span id="timer">TIME: 01:30</span>
+      </div>
+    </div>
+  `;
+
+  layer.appendChild(popup);
+}
+function updatePopupStage(now){
+  const e=now-stageStart;
+
+  remaining=Math.max(0,90-Math.ceil(e/1000));
+
+  const sec=String(remaining%60).padStart(2,'0');
+  const min=String(Math.floor(remaining/60)).padStart(2,'0');
+
+  const t=$('timer');
+  if(t)t.textContent='TIME: '+min+':'+sec;
+
+  if(!riserPlayed && remaining<=10 && remaining>0){
+    riserPlayed=true;
+    playAudio('ransom_attack_audio.mp3',false);
+  }
+
+  updateStormPopups(now);
+
+  if(e>=90000){
+    startUnpaid();
+    return;
+  }
+}
+
+function spawnCoins(){
+  const types=[
+    ['gold.ico',-50],
+    ['coin_blue.ico',-25],
+    ['coin_red.ico',-25]
+  ];
+
+  for(let i=0;i<12;i++){
+    const coin=document.createElement('img');
+    const type=types[i%types.length];
+
+    coin.className='coin';
+    coin.src=assets+type[0]+'?v=2';
+    coin.dataset.value=type[1];
+
+    coin.style.left=rand(5,90)+'vw';
+    coin.style.top=rand(8,82)+'vh';
+
+    coin.addEventListener('dblclick',()=>{
+      collectCoin(coin);
+    });
+
+    $('popupLayer').appendChild(coin);
+  }
+}
+
+function collectCoin(coin){
+  if(paid)return;
+  if(!coin || !coin.parentNode)return;
+
+  const value=Number(coin.dataset.value)||0;
+
+  balance=Math.max(0,balance+value);
+
+  const text=$('balanceText');
+  if(text)text.textContent=balance;
+
+  coin.remove();
+
+  if(balance<=0){
+    finishPaid();
+  }
+}
+
+function createStormPopup(){
+  const p=document.createElement('div');
+
+  p.className='popup stormpopup';
+
+  const w=rand(145,260);
+  const h=rand(75,150);
+
+  p.style.width=w+'px';
+  p.style.height=h+'px';
+
+  p.style.left=rand(2,78)+'vw';
+  p.style.top=rand(5,82)+'vh';
+
+  p.style.zIndex='2';
+
+  p.style.setProperty('--shakeDur',rand(.32,.65)+'s');
+  p.style.setProperty('--shakeDelay',rand(0,.25)+'s');
+
+  const mode=randint(0,3);
+
+  if(mode===0){
+    p.innerHTML=`
+      <div style="height:24px;background:#d00000"></div>
+      <div class="blackmsg">
+        <span>ERROR: FILE RECOVERY FAILED</span>
+      </div>
+    `;
+  }
+
+  else if(mode===1){
+    p.innerHTML=`
+      <div style="height:18px;background:#111"></div>
+      <div class="glitch">
+        YOUR DATA IS NOT SAFE
+      </div>
+      <div style="height:8px;background:#d00000"></div>
+    `;
+  }
+
+  else if(mode===2){
+    p.innerHTML=`
+      <div class="stripe" style="top:0;left:0;right:0;background:#d00000"></div>
+      <div class="blackmsg">
+        <span>PAY NOW</span>
+      </div>
+    `;
+  }
+
+  else{
+    p.innerHTML=`
+      <div style="height:30px;background:#090909"></div>
+      <div class="glitch">
+        SYSTEM LOCKED
+      </div>
+      <div style="height:18px;background:#9a0000"></div>
+    `;
+  }
+
+  $('popupLayer').appendChild(p);
+
+  stormPopups.push(p);
+}
+
+function updateStormPopups(now){
+  if(!stormCycleStart){
+    stormCycleStart=now;
+  }
+
+  const elapsed=now-stormCycleStart;
+
+  if(stormPopups.length<5){
+    while(stormPopups.length<5){
+      createStormPopup();
+    }
+  }
+
+  if(!stormRemovalAt && elapsed>=3000){
+    stormRemovalAt=now;
+  }
+
+  if(stormRemovalAt && now-stormRemovalAt>=0){
+    let removed=0;
+
+    while(removed<2 && stormPopups.length){
+      const p=stormPopups.shift();
+      if(p && p.parentNode)p.remove();
+      removed++;
+    }
+
+    stormRemovalAt=0;
+    stormCycleStart=now+2000;
+  }
+
+  if(
+    stormCycleStart &&
+    now>=stormCycleStart &&
+    stormPopups.length<5
+  ){
+    while(stormPopups.length<5){
+      createStormPopup();
+    }
+  }
+}
+
+function finishPaid(){
+  if(paid)return;
+
+  paid=true;
+  stage=0;
+
+  stopAudio();
+
+  clearGameObjects();
+
+  $('popupLayer').style.display='none';
+
+  show('end');
+
+  playAudio('ransom_thank_you.mp3',false);
+
+  setTimeout(()=>{
+    if($('end').classList.contains('active')){
+      intro();
+    }
+  },TIMINGS.thankYou);
+}
+
+function startUnpaid(){
+  stage=7;
+  stageStart=performance.now();
+
+  stopAudio();
+
+  clearGameObjects();
+
+  $('popupLayer').style.display='none';
+
+  show('bsod');
+
+  $('bsodfill').style.width='0%';
+  $('bsodPercent').textContent='0% complete';
+
+  playAudio('ransom_attack_end.mp3',false);
+}
+
+function updateUnpaid(now){
+  const e=now-stageStart;
+
+  if(e<TIMINGS.fakeBSOD){
+    const p=clamp(e/TIMINGS.fakeBSOD,0,1);
+    const percent=Math.floor(p*100);
+
+    $('bsodfill').style.width=percent+'%';
+    $('bsodPercent').textContent=percent+'% complete';
+
+    return;
+  }
+
+  if(e<TIMINGS.fakeBSOD+TIMINGS.fakeBoot){
+    const p=clamp(
+      (e-TIMINGS.fakeBSOD)/TIMINGS.fakeBoot,
+      0,
+      1
+    );
+
+    $('bsod').style.opacity=String(1-p);
+
+    return;
+  }
+
+  $('bsod').style.opacity='1';
+
+  stage=8;
+  stageStart=now;
+  miniStart=now;
+  miniNextMove=now;
+  miniFound=0;
+  miniNodes=[];
+
+  show('mini');
+  createMiniNodes();
+
+  playAudio('ransom_theme.mp3',true);
+}function createMiniNodes(){
+  miniNodes=[];
+
+  for(let i=1;i<=TIMINGS.target;i++){
+    const node=document.createElement('button');
+
+    node.className='node';
+    node.textContent=i;
+
+    node.dataset.id=i;
+
+    positionMiniNode(node);
+
+    node.addEventListener('pointerdown',()=>{
+      if(stage!==8)return;
+
+      const id=Number(node.dataset.id);
+
+      if(id===miniFound+1){
+        miniFound++;
+
+        node.remove();
+
+        if(miniFound>=TIMINGS.target){
+          finishMini();
+        }
+      }else{
+        miniFound=0;
+        toast('Wrong node!');
+      }
+    });
+
+    $('mini').appendChild(node);
+    miniNodes.push(node);
+  }
+
+  miniNextMove=performance.now()+TIMINGS.miniMove;
+}
+
+function positionMiniNode(node){
+  const margin=75;
+
+  const x=rand(
+    margin,
+    Math.max(margin,window.innerWidth-margin-58)
+  );
+
+  const y=rand(
+    125,
+    Math.max(125,window.innerHeight-margin-58)
+  );
+
+  node.style.left=x+'px';
+  node.style.top=y+'px';
+}
+
+function moveMiniNodes(){
+  miniNodes.forEach(node=>{
+    if(node && node.parentNode){
+      positionMiniNode(node);
+    }
+  });
+}
+
+function updateMini(now){
+  const elapsed=now-miniStart;
+  const left=Math.max(
+    0,
+    TIMINGS.miniGame-elapsed
+  );
+
+  $('miniTimer').textContent=
+    'TIME: '+(left/1000).toFixed(1);
+
+  $('miniStatus').textContent=
+    'Nodes found: '+miniFound+'/'+TIMINGS.target;
+
+  if(now>=miniNextMove){
+    moveMiniNodes();
+    miniNextMove=now+TIMINGS.miniMove;
+  }
+
+  if(elapsed>=TIMINGS.miniGame){
+    failMini();
+  }
+}
+
+function finishMini(){
+  stage=0;
+
+  stopAudio();
+
+  miniNodes.forEach(n=>{
+    if(n && n.parentNode)n.remove();
+  });
+
+  miniNodes=[];
+
+  show('end');
+
+  playAudio('ransom_thank_you.mp3',false);
+
+  setTimeout(()=>{
+    if($('end').classList.contains('active')){
+      intro();
+    }
+  },TIMINGS.thankYou);
+}
+
+function failMini(){
+  stage=7;
+  stageStart=performance.now();
+
+  miniNodes.forEach(n=>{
+    if(n && n.parentNode)n.remove();
+  });
+
+  miniNodes=[];
+
+  show('bsod');
+
+  $('bsod').style.opacity='1';
+  $('bsodfill').style.width='0%';
+  $('bsodPercent').textContent='0% complete';
+
+  playAudio('unrecoverable.mp3',false);
+}
+
+$('playBtn').addEventListener('pointerdown',()=>{
+  startGame();
+});
+
+$('understandBtn').addEventListener('pointerdown',()=>{
+  startGame();
+});
+
+$('settingsBtn').addEventListener('pointerdown',()=>{
+  toast('Settings are currently using the default configuration.');
+});
+
+$('exitBtn').addEventListener('pointerdown',()=>{
+  toast('You can safely close this page.');
+});
+
+$('safeExit').addEventListener('pointerdown',()=>{
+  stage=0;
+  stopAudio();
+  clearGameObjects();
+  $('popupLayer').style.display='none';
+  intro();
+});
+
+window.addEventListener('resize',()=>{
+  if(stage===8){
+    miniNodes.forEach(positionMiniNode);
+  }
+});
+
+intro();
+requestAnimationFrame(update);
+
+</script>
+</body>
+</html>
