@@ -26,20 +26,8 @@ button:active{transform:scale(.97)}
 .credit .ninety{font-size:clamp(80px,18vw,150px);line-height:.8}
 #menu{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);display:none;gap:10px;flex-direction:column;width:min(340px,76vw)}
 #menu button{border-color:#b00000;background:#050505}
-.menuCurrencies{
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  margin-bottom:4px;
-}
-.currency{
-  border:1px solid #555;
-  background:#090909;
-  padding:7px 11px;
-  border-radius:4px;
-  font-size:14px;
-  font-weight:700;
-}
+.menuCurrencies{display:flex;justify-content:center;gap:10px;margin-bottom:4px}
+.currency{border:1px solid #555;background:#090909;padding:7px 11px;border-radius:4px;font-size:14px;font-weight:700}
 
 /* GENERAL */
 .dialog{width:min(650px,92vw);background:#050505;border:1px solid #555;padding:20px;text-align:center}
@@ -104,13 +92,7 @@ button:active{transform:scale(.97)}
   justify-content:flex-start;
   overflow:auto;
 }
-.panel{
-  width:min(760px,94vw);
-  margin:auto;
-  border:1px solid #444;
-  background:#090909;
-  padding:16px;
-}
+.panel{width:min(760px,94vw);margin:auto;border:1px solid #444;background:#090909;padding:16px}
 .panel h1{margin:0 0 12px;color:#d00000;text-align:center}
 .shopTabs{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:12px}
 .shopTabs button{font-size:14px;padding:9px 12px}
@@ -392,10 +374,6 @@ button:active{transform:scale(.97)}
 const assets='https://scriptersketch.github.io/A-90-Game-Mobile-Port/';
 const $=id=>document.getElementById(id);
 
-/* =========================
-   GAME STATE
-========================= */
-
 let audio=null;
 let audioType='';
 
@@ -424,10 +402,6 @@ let miniStart=0;
 let miniNextMove=0;
 let miniFound=0;
 
-/* =========================
-   TIMINGS
-========================= */
-
 const TIMINGS={
   randomFlash:300,
   centerFlash:300,
@@ -445,10 +419,6 @@ const TIMINGS={
   safeCrash:5200,
   thankYou:4154
 };
-
-/* =========================
-   SAVED PLAYER DATA
-========================= */
 
 const defaultData={
   ransomPoints:0,
@@ -555,10 +525,6 @@ function spendStardust(amount){
   return true;
 }
 
-/* =========================
-   SETTINGS
-========================= */
-
 let SETTINGS={
   musicVolume:50,
   sfxVolume:50
@@ -578,10 +544,6 @@ try{
     );
 
 }catch{}
-
-/* =========================
-   AUDIO
-========================= */
 
 function saveSettings(){
 
@@ -836,10 +798,6 @@ $('sfxSlider').addEventListener(
   }
 );
 
-/* =========================
-   SCREENS
-========================= */
-
 function show(id){
 
   document
@@ -884,10 +842,6 @@ function toast(msg){
       2200
     );
 }
-
-/* =========================
-   INTRO
-========================= */
 
 function intro(){
 
@@ -945,10 +899,6 @@ function intro(){
     10400
   );
 }
-
-/* =========================
-   MENU BUTTONS
-========================= */
 
 $('play').onclick=()=>{
   show('warning');
@@ -1011,10 +961,6 @@ $('safeExit').onclick=()=>{
 
   intro();
 };
-
-/* =========================
-   SHOP DATA
-========================= */
 
 const SHOP={
 
@@ -1292,10 +1238,6 @@ function shopTab(tab){
   }
 }
 
-/* =========================
-   QUESTS
-========================= */
-
 const QUEST_POOL=[
 
   {
@@ -1428,10 +1370,6 @@ function questEvent(type){
     completeQuest(q.id);
 }
 
-/* =========================
-   GALLERY
-========================= */
-
 function renderGallery(){
 
   const box=
@@ -1471,10 +1409,6 @@ function renderGallery(){
 
   `;
 }
-
-/* =========================
-   CRUCIFIX
-========================= */
 
 function useCrucifix(){
 
@@ -1606,10 +1540,6 @@ function showBadge(){
     );
 }
 
-/* =========================
-   GAME OBJECT CLEANUP
-========================= */
-
 function clearGameObjects(){
 
   $('popupLayer').innerHTML='';
@@ -1651,10 +1581,6 @@ function resetGameObjects(){
 
   $('bsod').style.opacity='1';
 }
-
-/* =========================
-   GAME START
-========================= */
 
 function startGame(){
 
@@ -1704,10 +1630,6 @@ function placeFace(){
   f.style.top=
     rand(8,76)+'vh';
 }
-
-/* =========================
-   A-90 MOVEMENT DETECTION
-========================= */
 
 let movementX=null;
 let movementY=null;
@@ -1795,10 +1717,6 @@ window.addEventListener(
   },
   {passive:true}
 );
-
-/* =========================
-   MAIN GAME LOOP
-========================= */
 
 function tick(){
 
@@ -1989,10 +1907,6 @@ function tick(){
   requestAnimationFrame(tick);
 }
 
-/* =========================
-   RANSOM
-========================= */
-
 function beginRansom(){
 
   stage=6;
@@ -2134,8 +2048,6 @@ function spawnCoins(){
     c.style.top=
       rand(7,84)+'vh';
 
-    /* ONE CLICK / ONE TAP COLLECTS THE COIN */
-
     c.addEventListener(
       'pointerdown',
       ev=>{
@@ -2228,10 +2140,18 @@ function updatePopupStage(now){
 
   updateStormPopups(now);
 
+  /*
+   * RISER FIX:
+   * The ransom timer starts at 90 seconds.
+   * 80,000ms elapsed = exactly 10 seconds remaining.
+   * Using elapsed time instead of the rounded display
+   * prevents the riser from firing early.
+   */
+
   if(
     !riserPlayed &&
-    remaining<=10 &&
-    remaining>0
+    e>=80000 &&
+    e<90000
   ){
 
     riserPlayed=true;
@@ -2250,10 +2170,6 @@ function updatePopupStage(now){
 
   }
 }
-
-/* =========================
-   DECORATIVE POPUPS
-========================= */
 
 function createStormPopup(){
 
@@ -2423,10 +2339,6 @@ function updateStormPopups(now){
   }
 }
 
-/* =========================
-   PAID / UNPAID
-========================= */
-
 function finishPaid(){
 
   if(paid)
@@ -2560,10 +2472,6 @@ function updateUnpaid(now){
     'music'
   );
 }
-
-/* =========================
-   MINI GAME
-========================= */
 
 function createMiniNodes(){
 
@@ -2823,10 +2731,6 @@ function failMini(){
   );
 }
 
-/* =========================
-   GAME TOUCH / CRUCIFIX
-========================= */
-
 $('game').addEventListener(
   'pointerdown',
   ev=>{
@@ -2859,10 +2763,6 @@ window.addEventListener(
   }
 );
 
-/* =========================
-   RANDOM HELPERS
-========================= */
-
 function rand(min,max){
 
   return (
@@ -2883,10 +2783,6 @@ function randint(min,max){
   );
 
 }
-
-/* =========================
-   START
-========================= */
 
 refreshCurrency();
 
