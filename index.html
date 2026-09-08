@@ -58,30 +58,196 @@ button:active{transform:scale(.97)}
 .goldbox{background:#e7bd00;color:#000;flex:0 0 37%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700}
 .goldbox img{width:42px;height:42px;object-fit:contain}
 .timebox{background:#9a0000;flex:1;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700}
-.coin{position:absolute;width:64px;height:64px;object-fit:contain;z-index:5;animation:coinpop .15s;cursor:pointer;pointer-events:auto;touch-action:manipulation}
-@keyframes coinpop{from{transform:scale(.4)}to{transform:scale(1)}}
-.stormpopup{z-index:2;pointer-events:none;animation:stormShake var(--shakeDur,.42s) ease-in-out infinite}
-@keyframes stormShake{0%,100%{transform:translate(0,0)}25%{transform:translate(-2px,1px)}50%{transform:translate(2px,-2px)}75%{transform:translate(-1px,2px)}}
+
+.coin{
+  position:absolute;
+  width:64px;
+  height:64px;
+  object-fit:contain;
+  z-index:5;
+  animation:coinpop .15s;
+  cursor:pointer;
+  pointer-events:auto;
+  touch-action:manipulation
+}
+
+.goldPot{
+  position:absolute;
+  width:92px;
+  height:92px;
+  object-fit:contain;
+  z-index:8;
+  cursor:pointer;
+  pointer-events:auto;
+  animation:coinpop .2s;
+  touch-action:manipulation
+}
+
+.crucifixDrop{
+  position:absolute;
+  width:78px;
+  height:78px;
+  object-fit:contain;
+  z-index:8;
+  cursor:pointer;
+  pointer-events:auto;
+  animation:coinpop .2s;
+  touch-action:manipulation
+}
+
+#cameraButton{
+  position:absolute;
+  left:12px;
+  bottom:12px;
+  z-index:110;
+  display:none;
+  font-size:13px;
+  padding:8px 11px;
+  background:#111;
+  border-color:#777
+}
+
+@keyframes coinpop{
+  from{transform:scale(.4)}
+  to{transform:scale(1)}
+}
+
+.stormpopup{
+  z-index:2;
+  pointer-events:none;
+  animation:stormShake var(--shakeDur,.42s) ease-in-out infinite
+}
+
+@keyframes stormShake{
+  0%,100%{transform:translate(0,0)}
+  25%{transform:translate(-2px,1px)}
+  50%{transform:translate(2px,-2px)}
+  75%{transform:translate(-1px,2px)}
+}
+
+/* JUMPSCARE FREEZE */
+#jumpscareFreeze{
+  position:absolute;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:150;
+  background:#000;
+}
+
+#jumpscareFreeze img{
+  width:420px;
+  height:420px;
+  max-width:80vw;
+  max-height:80vw;
+  object-fit:contain;
+}
 
 /* BSOD */
-#bsod{background:#005bb1;z-index:20;flex-direction:column;align-items:flex-start;justify-content:flex-start;padding:8vh 10vw}
-#bsod .sad{font-size:clamp(70px,18vw,150px);font-weight:300}
-#bsod .msg{font-size:clamp(18px,4vw,28px);max-width:900px;line-height:1.35}
-#bsodPercent{font-size:20px;margin-top:30px}
-#bsodbar{width:min(720px,80vw);height:22px;border:1px solid #fff;margin-top:12px}
-#bsodfill{height:100%;width:0;background:#fff}
+#bsod{
+  background:#005bb1;
+  z-index:20;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:flex-start;
+  padding:8vh 10vw
+}
+
+#bsod .sad{
+  font-size:clamp(70px,18vw,150px);
+  font-weight:300
+}
+
+#bsod .msg{
+  font-size:clamp(18px,4vw,28px);
+  max-width:900px;
+  line-height:1.35
+}
+
+#bsodPercent{
+  font-size:20px;
+  margin-top:30px
+}
+
+#bsodbar{
+  width:min(720px,80vw);
+  height:22px;
+  border:1px solid #fff;
+  margin-top:12px
+}
+
+#bsodfill{
+  height:100%;
+  width:0;
+  background:#fff
+}
 
 /* MINI GAME */
-#mini{background:#0c0c0c;z-index:25}
-#mini h2{position:absolute;top:25px;left:0;width:100%;text-align:center;font-size:28px}
-#miniTimer{position:absolute;top:75px;width:100%;text-align:center;font-size:18px}
-#miniStatus{position:absolute;bottom:25px;width:100%;text-align:center;color:#bbb}
-.node{position:absolute;width:58px;height:58px;padding:0;border-radius:50%;background:#121212;border:2px solid #888;font-size:18px}
+#mini{
+  background:#0c0c0c;
+  z-index:25
+}
+
+#mini h2{
+  position:absolute;
+  top:25px;
+  left:0;
+  width:100%;
+  text-align:center;
+  font-size:28px
+}
+
+#miniTimer{
+  position:absolute;
+  top:75px;
+  width:100%;
+  text-align:center;
+  font-size:18px
+}
+
+#miniStatus{
+  position:absolute;
+  bottom:25px;
+  width:100%;
+  text-align:center;
+  color:#bbb
+}
+
+.node{
+  position:absolute;
+  width:58px;
+  height:58px;
+  padding:0;
+  border-radius:50%;
+  background:#121212;
+  border:2px solid #888;
+  font-size:18px
+}
 
 /* THANK YOU */
-#end{background:#3bc700;z-index:28}
-.thanks{width:360px;height:226px;max-width:85vw;max-height:54vw;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.thanks img{width:100%;height:100%;object-fit:contain}
+#end{
+  background:#3bc700;
+  z-index:28
+}
+
+.thanks{
+  width:360px;
+  height:226px;
+  max-width:85vw;
+  max-height:54vw;
+  background:#000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden
+}
+
+.thanks img{
+  width:100%;
+  height:100%;
+  object-fit:contain
+}
 
 /* SHOP */
 #shop,#settingsScreen,#quests,#gallery{
@@ -90,29 +256,112 @@ button:active{transform:scale(.97)}
   padding:18px;
   flex-direction:column;
   justify-content:flex-start;
-  overflow:auto;
+  overflow:auto
 }
-.panel{width:min(760px,94vw);margin:auto;border:1px solid #444;background:#090909;padding:16px}
-.panel h1{margin:0 0 12px;color:#d00000;text-align:center}
-.shopTabs{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:12px}
-.shopTabs button{font-size:14px;padding:9px 12px}
-.shopGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-.shopItem{border:1px solid #444;background:#050505;padding:10px;text-align:center}
-.shopItem h3{margin:4px 0 7px}
-.shopItem p{color:#bbb;font-size:13px;min-height:35px}
-.shopItem button{font-size:14px;padding:9px 10px}
-.owned{color:#45e36b;font-weight:700}
-.locked{color:#888}
-.backBtn{margin-top:12px;width:100%}
-.quest{border:1px solid #444;padding:12px;margin:8px 0;background:#070707}
-.quest h3{margin:0 0 5px}
-.quest p{margin:5px 0;color:#bbb;font-size:13px}
-.quest button{font-size:14px;padding:8px 12px}
+
+.panel{
+  width:min(760px,94vw);
+  margin:auto;
+  border:1px solid #444;
+  background:#090909;
+  padding:16px
+}
+
+.panel h1{
+  margin:0 0 12px;
+  color:#d00000;
+  text-align:center
+}
+
+.shopTabs{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  justify-content:center;
+  margin-bottom:12px
+}
+
+.shopTabs button{
+  font-size:14px;
+  padding:9px 12px
+}
+
+.shopGrid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px
+}
+
+.shopItem{
+  border:1px solid #444;
+  background:#050505;
+  padding:10px;
+  text-align:center
+}
+
+.shopItem h3{
+  margin:4px 0 7px
+}
+
+.shopItem p{
+  color:#bbb;
+  font-size:13px;
+  min-height:35px
+}
+
+.shopItem button{
+  font-size:14px;
+  padding:9px 10px
+}
+
+.owned{
+  color:#45e36b;
+  font-weight:700
+}
+
+.locked{
+  color:#888
+}
+
+.backBtn{
+  margin-top:12px;
+  width:100%
+}
+
+/* CAMERA */
+.cameraPhoto{
+  border:2px solid #777;
+  background:#111;
+  padding:8px;
+  margin:8px 0
+}
+
+.cameraPhoto canvas{
+  width:100%;
+  display:block;
+  background:#000
+}
+
+.cameraPhoto small{
+  display:block;
+  color:#aaa;
+  margin-top:6px
+}
 
 /* SETTINGS */
-.sliderRow{margin:18px 0}
-.sliderRow label{display:flex;justify-content:space-between;margin-bottom:8px}
-.sliderRow input{width:100%}
+.sliderRow{
+  margin:18px 0
+}
+
+.sliderRow label{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:8px
+}
+
+.sliderRow input{
+  width:100%
+}
 
 /* BADGE */
 #badge{
@@ -128,8 +377,9 @@ button:active{transform:scale(.97)}
   padding:9px 12px;
   border-radius:5px;
   box-shadow:0 0 18px #2770ff;
-  animation:badgeIn .6s ease-out;
+  animation:badgeIn .6s ease-out
 }
+
 #badgeIcon{
   width:42px;
   height:42px;
@@ -138,11 +388,23 @@ button:active{transform:scale(.97)}
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:25px;
+  font-size:25px
 }
-#badge b{font-size:14px}
-#badge small{display:block;color:#d9e5ff;margin-top:2px}
-@keyframes badgeIn{from{transform:translateX(-120%)}to{transform:translateX(0)}}
+
+#badge b{
+  font-size:14px
+}
+
+#badge small{
+  display:block;
+  color:#d9e5ff;
+  margin-top:2px
+}
+
+@keyframes badgeIn{
+  from{transform:translateX(-120%)}
+  to{transform:translateX(0)}
+}
 
 #toast{
   position:absolute;
@@ -155,8 +417,9 @@ button:active{transform:scale(.97)}
   border-radius:4px;
   display:none;
   z-index:300;
-  white-space:nowrap;
+  white-space:nowrap
 }
+
 #safeExit{
   position:absolute;
   right:12px;
@@ -165,7 +428,7 @@ button:active{transform:scale(.97)}
   background:#111;
   border-color:#666;
   font-size:13px;
-  padding:8px 10px;
+  padding:8px 10px
 }
 </style>
 </head>
@@ -237,6 +500,11 @@ button:active{transform:scale(.97)}
 
   <div id="popupLayer"></div>
 
+  <div id="jumpscareFreeze">
+    <img src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/ransom_attack.png?v=2">
+  </div>
+
+  <button id="cameraButton">📷 TAKE PHOTO</button>
   <button id="safeExit">EXIT</button>
 </div>
 
@@ -394,6 +662,12 @@ let remaining=90;
 let riserPlayed=false;
 let coinsCollected=0;
 
+let goldPotFound=false;
+let crucifixesFound=0;
+let ransomUsedCrucifix=false;
+
+let paymentMethod='none';
+
 let stormPopups=[];
 let stormCycleStart=0;
 let stormRemovalAt=0;
@@ -402,6 +676,9 @@ let miniNodes=[];
 let miniStart=0;
 let miniNextMove=0;
 let miniFound=0;
+
+let jumpscareEnding=false;
+let jumpscareSoundCount=0;
 
 const TIMINGS={
   randomFlash:300,
@@ -435,7 +712,8 @@ const defaultData={
   selectedRansom:'ransom_classic',
   chromas:[],
   completedQuests:[],
-  questProgress:{}
+  questProgress:{},
+  photos:[]
 };
 
 let DATA=loadData();
@@ -443,24 +721,51 @@ let DATA=loadData();
 function loadData(){
 
   try{
+
     const saved=JSON.parse(
       localStorage.getItem('A90_SAVE')
     );
 
-    return Object.assign({},defaultData,saved||{});
+    const data=
+      Object.assign({},defaultData,saved||{});
+
+    if(!Array.isArray(data.photos))
+      data.photos=[];
+
+    if(!Array.isArray(data.chromas))
+      data.chromas=[];
+
+    if(!Array.isArray(data.completedQuests))
+      data.completedQuests=[];
+
+    if(!Array.isArray(data.ownedItems))
+      data.ownedItems=[];
+
+    if(!Array.isArray(data.ownedCosmetics))
+      data.ownedCosmetics=[
+        'crucifix_default',
+        'camera_default',
+        'ransom_classic'
+      ];
+
+    return data;
 
   }catch{
+
     return Object.assign({},defaultData);
+
   }
 }
 
 function saveData(){
 
   try{
+
     localStorage.setItem(
       'A90_SAVE',
       JSON.stringify(DATA)
     );
+
   }catch{}
 
 }
@@ -478,6 +783,7 @@ function refreshCurrency(){
 
   if($('questRP'))
     $('questRP').textContent=DATA.ransomPoints;
+
 }
 
 function addRP(amount){
@@ -488,6 +794,7 @@ function addRP(amount){
   refreshCurrency();
 
   toast('+'+amount+' Ransom Points!');
+
 }
 
 function addStardust(amount){
@@ -498,6 +805,7 @@ function addStardust(amount){
   refreshCurrency();
 
   toast('+'+amount+' Stardust!');
+
 }
 
 function spendRP(amount){
@@ -511,6 +819,7 @@ function spendRP(amount){
   refreshCurrency();
 
   return true;
+
 }
 
 function spendStardust(amount){
@@ -524,6 +833,7 @@ function spendStardust(amount){
   refreshCurrency();
 
   return true;
+
 }
 
 let SETTINGS={
@@ -549,10 +859,12 @@ try{
 function saveSettings(){
 
   try{
+
     localStorage.setItem(
       'A90_SETTINGS',
       JSON.stringify(SETTINGS)
     );
+
   }catch{}
 
 }
@@ -560,15 +872,22 @@ function saveSettings(){
 function stopMusic(){
 
   if(musicFadeFrame){
-    cancelAnimationFrame(musicFadeFrame);
+
+    cancelAnimationFrame(
+      musicFadeFrame
+    );
+
     musicFadeFrame=null;
+
   }
 
   if(menuMusic){
 
     try{
+
       menuMusic.pause();
       menuMusic.currentTime=0;
+
     }catch{}
 
   }
@@ -576,36 +895,46 @@ function stopMusic(){
   if(shopMusic){
 
     try{
+
       shopMusic.pause();
       shopMusic.currentTime=0;
+
     }catch{}
 
   }
 
   menuMusic=null;
   shopMusic=null;
+
 }
 
 function fadeInMusic(a,target){
 
-  if(musicFadeFrame){
-    cancelAnimationFrame(musicFadeFrame);
-  }
+  if(musicFadeFrame)
+    cancelAnimationFrame(
+      musicFadeFrame
+    );
 
-  const start=performance.now();
+  const start=
+    performance.now();
 
   a.volume=0;
 
   function step(now){
 
-    const p=Math.min(
-      1,
-      (now-start)/3000
-    );
+    const p=
+      Math.min(
+        1,
+        (now-start)/3000
+      );
 
-    a.volume=target*p;
+    a.volume=
+      target*p;
 
-    if(p<1 && !a.paused){
+    if(
+      p<1 &&
+      !a.paused
+    ){
 
       musicFadeFrame=
         requestAnimationFrame(step);
@@ -615,10 +944,12 @@ function fadeInMusic(a,target){
       musicFadeFrame=null;
 
     }
+
   }
 
   musicFadeFrame=
     requestAnimationFrame(step);
+
 }
 
 function playMenuMusic(){
@@ -632,7 +963,8 @@ function playMenuMusic(){
 
     menuMusic=
       new Audio(
-        assets+'intro_theme.mp3?v=2'
+        assets+
+        'intro_theme.mp3?v=2'
       );
 
     menuMusic.loop=true;
@@ -641,10 +973,12 @@ function playMenuMusic(){
 
     menuMusic.play()
       .then(()=>{
+
         fadeInMusic(
           menuMusic,
           volume
         );
+
       })
       .catch(()=>{});
 
@@ -663,7 +997,8 @@ function playShopMusic(){
 
     shopMusic=
       new Audio(
-        assets+'TheShop.mp3?v=2'
+        assets+
+        'TheShop.mp3?v=2'
       );
 
     shopMusic.loop=true;
@@ -673,17 +1008,21 @@ function playShopMusic(){
     shopMusic.addEventListener(
       'error',
       ()=>{
-        toast('Could not load TheShop.mp3');
+        toast(
+          'Could not load TheShop.mp3'
+        );
       },
       {once:true}
     );
 
     shopMusic.play()
       .then(()=>{
+
         fadeInMusic(
           shopMusic,
           volume
         );
+
       })
       .catch(()=>{});
 
@@ -708,7 +1047,9 @@ function playAudio(
 
     audio=
       new Audio(
-        assets+name+'?v=2'
+        assets+
+        name+
+        '?v=2'
       );
 
     audio.loop=loop;
@@ -742,6 +1083,7 @@ function stopAudio(){
 
   audio=null;
   audioType='';
+
 }
 
 $('musicSlider').value=
@@ -761,7 +1103,9 @@ $('musicSlider').addEventListener(
   ()=>{
 
     SETTINGS.musicVolume=
-      Number($('musicSlider').value);
+      Number(
+        $('musicSlider').value
+      );
 
     $('musicValue').textContent=
       SETTINGS.musicVolume+'%';
@@ -785,7 +1129,9 @@ $('sfxSlider').addEventListener(
   ()=>{
 
     SETTINGS.sfxVolume=
-      Number($('sfxSlider').value);
+      Number(
+        $('sfxSlider').value
+      );
 
     $('sfxValue').textContent=
       SETTINGS.sfxVolume+'%';
@@ -803,11 +1149,13 @@ function show(id){
 
   document
     .querySelectorAll('.screen')
-    .forEach(x=>
-      x.classList.remove('active')
+    .forEach(
+      x=>
+        x.classList.remove('active')
     );
 
   $(id).classList.add('active');
+
 }
 
 function goMenu(){
@@ -826,22 +1174,29 @@ function goMenu(){
   refreshCurrency();
 
   playMenuMusic();
+
 }
 
 function toast(msg){
 
-  const t=$('toast');
+  const t=
+    $('toast');
 
   t.textContent=msg;
   t.style.display='block';
 
-  clearTimeout(t._timer);
+  clearTimeout(
+    t._timer
+  );
 
   t._timer=
     setTimeout(
-      ()=>t.style.display='none',
+      ()=>{
+        t.style.display='none';
+      },
       2200
     );
+
 }
 
 function intro(){
@@ -855,7 +1210,8 @@ function intro(){
 
   $('menu').style.display='none';
 
-  const credit=$('credits');
+  const credit=
+    $('credits');
 
   const by=
     credit.querySelector('.by');
@@ -873,22 +1229,29 @@ function intro(){
   ninety.style.display='none';
 
   setTimeout(
-    ()=>by.style.display='block',
+    ()=>{
+      by.style.display='block';
+    },
     0
   );
 
   setTimeout(
-    ()=>name.style.display='block',
+    ()=>{
+      name.style.display='block';
+    },
     3700
   );
 
   setTimeout(
-    ()=>ninety.style.display='block',
+    ()=>{
+      ninety.style.display='block';
+    },
     7400
   );
 
   setTimeout(
     ()=>{
+
       credit.style.display='none';
 
       $('menu').style.display='flex';
@@ -896,9 +1259,11 @@ function intro(){
       refreshCurrency();
 
       playMenuMusic();
+
     },
     10400
   );
+
 }
 
 $('play').onclick=()=>{
@@ -912,6 +1277,7 @@ $('back').onclick=()=>{
   $('menu').style.display='flex';
 
   playMenuMusic();
+
 };
 
 $('understand').onclick=()=>{
@@ -923,6 +1289,7 @@ $('settings').onclick=()=>{
   stopMusic();
 
   show('settingsScreen');
+
 };
 
 $('shopBtn').onclick=()=>{
@@ -932,6 +1299,7 @@ $('shopBtn').onclick=()=>{
   shopTab('items');
 
   playShopMusic();
+
 };
 
 $('questsBtn').onclick=()=>{
@@ -941,6 +1309,7 @@ $('questsBtn').onclick=()=>{
   show('quests');
 
   renderQuests();
+
 };
 
 $('exit').onclick=()=>{
@@ -961,6 +1330,7 @@ $('safeExit').onclick=()=>{
   resetGameObjects();
 
   intro();
+
 };
 
 const SHOP={
@@ -977,7 +1347,7 @@ const SHOP={
     {
       id:'crucifix',
       name:'Crucifix',
-      price:475,
+      price:250,
       desc:'A purely visual item used in the Ransom encounter.'
     }
 
@@ -1049,6 +1419,7 @@ function buyItem(item){
     toast('Already owned!');
 
     return;
+
   }
 
   const currency=
@@ -1072,11 +1443,14 @@ function buyItem(item){
     );
 
     return;
+
   }
 
   if(currency==='stardust'){
 
     DATA.chromas.push(item.id);
+
+    questEvent('first_chroma');
 
   }else if(
     item.id==='camera' ||
@@ -1098,6 +1472,7 @@ function buyItem(item){
   );
 
   shopTab(currentShopTab);
+
 }
 
 let currentShopTab='items';
@@ -1143,6 +1518,7 @@ function shopTab(tab){
       `).join('');
 
     return;
+
   }
 
   if(tab==='cosmetics'){
@@ -1189,13 +1565,17 @@ function shopTab(tab){
       `).join('');
 
     return;
+
   }
 
   if(tab==='gallery'){
 
-    if(!DATA.ownedItems.includes('camera')){
+    if(
+      !DATA.ownedItems.includes('camera')
+    ){
 
       box.innerHTML=`
+
         <div class="shopItem">
 
           <h3>GALLERY LOCKED</h3>
@@ -1206,9 +1586,11 @@ function shopTab(tab){
           </p>
 
         </div>
+
       `;
 
       return;
+
     }
 
     box.innerHTML=`
@@ -1219,8 +1601,8 @@ function shopTab(tab){
 
         <p>
           Camera unlocked.
-          The Gallery contains your
-          discovered visual records.
+          Take photos during gameplay
+          with the Camera button.
         </p>
 
         <button
@@ -1236,7 +1618,9 @@ function shopTab(tab){
       </div>
 
     `;
+
   }
+
 }
 
 const QUEST_POOL=[
@@ -1303,6 +1687,46 @@ const QUEST_POOL=[
     desc:'Escape the ransom sequence without paying the ransom.',
     reward:50,
     type:'ransom_survivor'
+  },
+
+  {
+    id:'first_chroma',
+    title:'Buy Your First Chroma',
+    desc:'Purchase your first Chroma from the Shop.',
+    reward:25,
+    type:'first_chroma'
+  },
+
+  {
+    id:'last_second',
+    title:'System Recovery',
+    desc:'Complete System Recovery with less than 1 second remaining.',
+    reward:250,
+    type:'last_second'
+  },
+
+  {
+    id:'rich',
+    title:'WOOO IM RICH :D',
+    desc:'Find and use a Gold Pot to pay off the ransom.',
+    reward:75,
+    type:'gold_pot'
+  },
+
+  {
+    id:'quick_tapper',
+    title:'Quick Tapper',
+    desc:'IM NOT GONNA GIVE MONEY TO A CRIMINAL! Pay the ransom off at the last second.',
+    reward:50,
+    type:'quick_tapper'
+  },
+
+  {
+    id:'holy_grail',
+    title:'Holy Grail',
+    desc:'Find 2 Crucifixes in the same playthrough.',
+    reward:100,
+    type:'two_crucifixes'
   }
 
 ];
@@ -1328,7 +1752,8 @@ function completeQuest(id){
       x=>x.id===id
     );
 
-  if(!q)return;
+  if(!q)
+    return;
 
   DATA.completedQuests.push(id);
 
@@ -1337,6 +1762,7 @@ function completeQuest(id){
   addRP(q.reward);
 
   renderQuests();
+
 }
 
 function renderQuests(){
@@ -1350,6 +1776,7 @@ function renderQuests(){
   if(!qs.length){
 
     box.innerHTML=`
+
       <div class="quest">
 
         <h3>All quests complete!</h3>
@@ -1360,9 +1787,11 @@ function renderQuests(){
         </p>
 
       </div>
+
     `;
 
     return;
+
   }
 
   box.innerHTML=
@@ -1381,7 +1810,9 @@ function renderQuests(){
 
         <button
           onclick="
-            toast('Complete the quest in-game!')
+            toast(
+              'Complete the quest in-game!'
+            )
           "
         >
           TRACK
@@ -1390,6 +1821,7 @@ function renderQuests(){
       </div>
 
     `).join('');
+
 }
 
 function questEvent(type){
@@ -1401,6 +1833,7 @@ function questEvent(type){
 
   if(q)
     completeQuest(q.id);
+
 }
 
 function renderGallery(){
@@ -1408,9 +1841,12 @@ function renderGallery(){
   const box=
     $('galleryContent');
 
-  if(!DATA.ownedItems.includes('camera')){
+  if(
+    !DATA.ownedItems.includes('camera')
+  ){
 
     box.innerHTML=`
+
       <div class="shopItem">
 
         <h3>LOCKED</h3>
@@ -1418,30 +1854,287 @@ function renderGallery(){
         <p>Buy the Camera first.</p>
 
       </div>
+
     `;
 
     return;
+
   }
 
-  box.innerHTML=`
+  let html=`
 
     <div class="shopItem">
+
       <h3>A90 Encounter</h3>
-      <p>Ransom encounter record unlocked.</p>
+
+      <p>
+        Ransom encounter record unlocked.
+      </p>
+
     </div>
 
     <div class="shopItem">
+
       <h3>Ransom</h3>
-      <p>Classic encounter entity.</p>
+
+      <p>
+        Classic encounter entity.
+      </p>
+
     </div>
 
     <div class="shopItem">
+
       <h3>Crucifix Binding</h3>
-      <p>Successful crucifix binding record.</p>
+
+      <p>
+        Successful crucifix binding record.
+      </p>
+
     </div>
 
   `;
+
+  if(DATA.photos.length){
+
+    html+=`
+
+      <div class="shopItem">
+
+        <h3>📷 YOUR PHOTOS</h3>
+
+        <p>
+          ${DATA.photos.length}
+          photo(s) saved.
+        </p>
+
+      </div>
+
+    `;
+
+    DATA.photos
+      .slice()
+      .reverse()
+      .forEach(
+        (photo,index)=>{
+
+          html+=`
+
+            <div class="cameraPhoto">
+
+              <img
+                src="${photo.data}"
+                style="
+                  width:100%;
+                  display:block;
+                  background:#000
+                "
+              >
+
+              <small>
+
+                Photo #${
+                  DATA.photos.length-index
+                }
+                — ${photo.label}
+
+              </small>
+
+            </div>
+
+          `;
+
+        }
+      );
+
+  }else{
+
+    html+=`
+
+      <div class="shopItem">
+
+        <h3>NO PHOTOS YET</h3>
+
+        <p>
+          Buy the Camera and take a photo
+          during your next playthrough.
+        </p>
+
+      </div>
+
+    `;
+
+  }
+
+  box.innerHTML=html;
+
 }
+
+function takePhoto(){
+
+  if(
+    !DATA.ownedItems.includes('camera')
+  ){
+
+    toast(
+      'You need the Camera from the Shop!'
+    );
+
+    return;
+
+  }
+
+  const canvas=
+    document.createElement('canvas');
+
+  canvas.width=800;
+  canvas.height=500;
+
+  const ctx=
+    canvas.getContext('2d');
+
+  ctx.fillStyle='#000';
+
+  ctx.fillRect(
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+  ctx.fillStyle='#fff';
+  ctx.font='bold 28px Arial';
+  ctx.textAlign='center';
+
+  let title='A90 ARCHIVE';
+
+  if(stage===6)
+    title='RANSOM ENCOUNTER';
+
+  else if(stage===3)
+    title='A-90 WARNING';
+
+  else if(stage===4)
+    title='A-90 ATTACK';
+
+  else if(stage===5)
+    title='DOWNLOADING RANSOM';
+
+  ctx.fillText(
+    title,
+    400,
+    50
+  );
+
+  const sourceImages=[
+
+    $('face'),
+    $('stopFace'),
+    $('attackFace')
+
+  ];
+
+  let drawn=false;
+
+  sourceImages.forEach(
+    img=>{
+
+      if(
+        img &&
+        img.style.display!=='none' &&
+        img.complete &&
+        img.naturalWidth
+      ){
+
+        const ratio=
+          Math.min(
+            520/img.naturalWidth,
+            340/img.naturalHeight
+          );
+
+        const w=
+          img.naturalWidth*ratio;
+
+        const h=
+          img.naturalHeight*ratio;
+
+        ctx.drawImage(
+          img,
+          400-w/2,
+          80,
+          w,
+          h
+        );
+
+        drawn=true;
+
+      }
+
+    }
+  );
+
+  if(!drawn){
+
+    ctx.fillStyle='#d00000';
+    ctx.font='bold 42px Arial';
+
+    ctx.fillText(
+      'RANSOM',
+      400,
+      270
+    );
+
+    ctx.fillStyle='#fff';
+    ctx.font='22px Arial';
+
+    ctx.fillText(
+      'ARCHIVED VISUAL RECORD',
+      400,
+      320
+    );
+
+  }
+
+  ctx.fillStyle='#aaa';
+  ctx.font='16px Arial';
+
+  ctx.fillText(
+    new Date().toLocaleTimeString(),
+    400,
+    465
+  );
+
+  const data=
+    canvas.toDataURL(
+      'image/png'
+    );
+
+  DATA.photos.push({
+    data:data,
+    label:title
+  });
+
+  if(DATA.photos.length>20)
+    DATA.photos.shift();
+
+  saveData();
+
+  toast(
+    'Photo saved to Gallery!'
+  );
+
+}
+
+$('cameraButton').addEventListener(
+  'pointerdown',
+  ev=>{
+
+    ev.stopPropagation();
+
+    takePhoto();
+
+  }
+);
 
 function useCrucifix(){
 
@@ -1454,7 +2147,10 @@ function useCrucifix(){
     );
 
     return;
+
   }
+
+  ransomUsedCrucifix=true;
 
   const roll=
     Math.random();
@@ -1478,6 +2174,7 @@ function useCrucifix(){
     );
 
   }
+
 }
 
 function bindRansom(){
@@ -1508,6 +2205,7 @@ function bindRansom(){
   c.style.height='130px';
   c.style.left='50%';
   c.style.top='50%';
+
   c.style.transform=
     'translate(-50%,-50%)';
 
@@ -1550,9 +2248,11 @@ function bindRansom(){
       );
 
     }
+
   }
 
   requestAnimationFrame(spin);
+
 }
 
 function showBadge(){
@@ -1562,7 +2262,9 @@ function showBadge(){
 
   b.style.display='flex';
 
-  clearTimeout(b._hide);
+  clearTimeout(
+    b._hide
+  );
 
   b._hide=
     setTimeout(
@@ -1571,12 +2273,15 @@ function showBadge(){
       },
       5000
     );
+
 }
 
 function clearGameObjects(){
 
   $('popupLayer').innerHTML='';
   $('popupLayer').style.display='none';
+
+  $('jumpscareFreeze').style.display='none';
 
   stormPopups=[];
 
@@ -1585,15 +2290,34 @@ function clearGameObjects(){
 
   document
     .querySelectorAll('.coin')
-    .forEach(x=>x.remove());
+    .forEach(
+      x=>x.remove()
+    );
+
+  document
+    .querySelectorAll('.goldPot')
+    .forEach(
+      x=>x.remove()
+    );
+
+  document
+    .querySelectorAll('.crucifixDrop')
+    .forEach(
+      x=>x.remove()
+    );
 
   document
     .querySelectorAll('.node')
-    .forEach(x=>x.remove());
+    .forEach(
+      x=>x.remove()
+    );
 
   document
     .querySelectorAll('.crucifix')
-    .forEach(x=>x.remove());
+    .forEach(
+      x=>x.remove()
+    );
+
 }
 
 function resetGameObjects(){
@@ -1606,6 +2330,8 @@ function resetGameObjects(){
 
   $('download').style.display='none';
 
+  $('cameraButton').style.display='none';
+
   $('fill').style.width='0%';
   $('pct').textContent='0%';
 
@@ -1613,6 +2339,10 @@ function resetGameObjects(){
     'transparent';
 
   $('bsod').style.opacity='1';
+
+  jumpscareEnding=false;
+  jumpscareSoundCount=0;
+
 }
 
 function startGame(){
@@ -1638,6 +2368,17 @@ function startGame(){
   riserPlayed=false;
   coinsCollected=0;
 
+  goldPotFound=false;
+  crucifixesFound=0;
+  ransomUsedCrucifix=false;
+
+  paymentMethod='none';
+
+  $('cameraButton').style.display=
+    DATA.ownedItems.includes('camera')
+      ? 'block'
+      : 'none';
+
   $('face').style.display='none';
   $('stopFace').style.display='none';
   $('attackFace').style.display='none';
@@ -1649,6 +2390,7 @@ function startGame(){
   );
 
   tick();
+
 }
 
 function placeFace(){
@@ -1663,6 +2405,7 @@ function placeFace(){
 
   f.style.top=
     rand(8,76)+'vh';
+
 }
 
 let movementX=null;
@@ -1689,6 +2432,7 @@ function registerMovement(x,y){
     movementY=y;
 
     return;
+
   }
 
   const distance=
@@ -1705,6 +2449,7 @@ function registerMovement(x,y){
 
   movementX=x;
   movementY=y;
+
 }
 
 window.addEventListener(
@@ -1812,7 +2557,9 @@ function tick(){
         'You stayed still. A90 left.'
       );
 
-      questEvent('a90_survivor');
+      questEvent(
+        'a90_survivor'
+      );
 
       stage=0;
 
@@ -1822,6 +2569,7 @@ function tick(){
       );
 
       return;
+
     }
 
     $('stopFace').style.display='none';
@@ -1904,6 +2652,7 @@ function tick(){
 
       setTimeout(
         ()=>{
+
           $('game').style.background=
             'transparent';
 
@@ -1941,6 +2690,7 @@ function tick(){
   }
 
   requestAnimationFrame(tick);
+
 }
 
 function beginRansom(){
@@ -1957,11 +2707,21 @@ function beginRansom(){
   riserPlayed=false;
   coinsCollected=0;
 
+  goldPotFound=false;
+  crucifixesFound=0;
+  ransomUsedCrucifix=false;
+
+  paymentMethod='none';
+
   $('popupLayer').style.display='block';
 
   createMainPopup();
 
   spawnCoins();
+
+  spawnGoldPot();
+
+  spawnCrucifixDrops();
 
   startDecorativeStorm();
 
@@ -1972,6 +2732,7 @@ function beginRansom(){
     true,
     'music'
   );
+
 }
 
 function createMainPopup(){
@@ -2040,11 +2801,14 @@ function createMainPopup(){
 
   p.addEventListener(
     'pointerdown',
-    ev=>ev.stopPropagation()
+    ev=>{
+      ev.stopPropagation();
+    }
   );
 
   $('popupLayer')
     .appendChild(p);
+
 }
 
 function spawnCoins(){
@@ -2098,7 +2862,205 @@ function spawnCoins(){
 
     $('popupLayer')
       .appendChild(c);
+
   }
+
+}
+
+function spawnGoldPot(){
+
+  /*
+   * Very rare Gold Pot:
+   * 2% chance each ransom encounter.
+   * The pot instantly clears the 500 ransom.
+   *
+   * Asset:
+   * gold_pot.png
+   */
+
+  if(
+    Math.random()>0.02
+  )
+    return;
+
+  const pot=
+    document.createElement('img');
+
+  pot.className='goldPot';
+
+  pot.src=
+    assets+
+    'gold_pot.png?v=2';
+
+  pot.style.left=
+    rand(8,84)+'vw';
+
+  pot.style.top=
+    rand(12,76)+'vh';
+
+  pot.addEventListener(
+    'pointerdown',
+    ev=>{
+
+      ev.stopPropagation();
+
+      useGoldPot(pot);
+
+    }
+  );
+
+  $('popupLayer')
+    .appendChild(pot);
+
+}
+
+function useGoldPot(pot){
+
+  if(
+    paid ||
+    goldPotFound
+  )
+    return;
+
+  goldPotFound=true;
+
+  paymentMethod='gold_pot';
+
+  balance=0;
+
+  const text=
+    $('balanceText');
+
+  if(text)
+    text.textContent='0';
+
+  pot.remove();
+
+  toast(
+    'GOLD POT! Ransom paid!'
+  );
+
+  questEvent(
+    'gold_pot'
+  );
+
+  finishPaid();
+
+}
+
+function spawnCrucifixDrops(){
+
+  /*
+   * Each Crucifix pickup has a 1% chance
+   * to spawn during a ransom encounter.
+   *
+   * Two independent chances are used,
+   * allowing two Crucifixes to be found
+   * in the same playthrough.
+   *
+   * Asset:
+   * crucifix.png
+   */
+
+  if(
+    Math.random()<0.01
+  ){
+
+    createCrucifixDrop();
+
+  }
+
+  if(
+    Math.random()<0.01
+  ){
+
+    setTimeout(
+      ()=>{
+
+        if(
+          stage===6 &&
+          !paid &&
+          crucifixesFound<2
+        ){
+
+          createCrucifixDrop();
+
+        }
+
+      },
+      1500
+    );
+
+  }
+
+}
+
+function createCrucifixDrop(){
+
+  if(
+    crucifixesFound>=2
+  )
+    return;
+
+  const c=
+    document.createElement('img');
+
+  c.className='crucifixDrop';
+
+  c.src=
+    assets+
+    'crucifix.png?v=2';
+
+  c.style.left=
+    rand(5,88)+'vw';
+
+  c.style.top=
+    rand(12,78)+'vh';
+
+  c.addEventListener(
+    'pointerdown',
+    ev=>{
+
+      ev.stopPropagation();
+
+      collectCrucifixDrop(c);
+
+    }
+  );
+
+  $('popupLayer')
+    .appendChild(c);
+
+}
+
+function collectCrucifixDrop(c){
+
+  if(
+    !c ||
+    !c.parentNode
+  )
+    return;
+
+  crucifixesFound++;
+
+  c.remove();
+
+  toast(
+    'Crucifix found! '+
+    crucifixesFound+
+    '/2'
+  );
+
+  if(
+    crucifixesFound>=2
+  ){
+
+    questEvent(
+      'two_crucifixes'
+    );
+
+  }
+
 }
 
 function collectCoin(c){
@@ -2111,13 +3073,17 @@ function collectCoin(c){
     return;
 
   const value=
-    Number(c.dataset.value)||0;
+    Number(
+      c.dataset.value
+    )||0;
 
   balance=
     Math.max(
       0,
       balance-value
     );
+
+  paymentMethod='coins';
 
   const text=
     $('balanceText');
@@ -2134,20 +3100,30 @@ function collectCoin(c){
     '-'+value+' ransom'
   );
 
-  if(coinsCollected>=18){
+  if(
+    coinsCollected>=18
+  ){
 
-    questEvent('coins');
+    questEvent(
+      'coins'
+    );
 
   }
 
-  if(balance<=0){
+  if(
+    balance<=0
+  ){
 
     finishPaid();
 
   }
+
 }
 
 function updatePopupStage(now){
+
+  if(jumpscareEnding)
+    return;
 
   const e=
     now-stageStart;
@@ -2161,14 +3137,20 @@ function updatePopupStage(now){
   const sec=
     String(
       remaining%60
-    ).padStart(2,'0');
+    ).padStart(
+      2,
+      '0'
+    );
 
   const min=
     String(
       Math.floor(
         remaining/60
       )
-    ).padStart(2,'0');
+    ).padStart(
+      2,
+      '0'
+    );
 
   const timer=
     $('timer');
@@ -2186,11 +3168,9 @@ function updatePopupStage(now){
   updateStormPopups(now);
 
   /*
-   * RISER FIX:
-   * The ransom timer starts at 90 seconds.
-   * 80,000ms elapsed = exactly 10 seconds remaining.
-   * Using elapsed time instead of the rounded display
-   * prevents the riser from firing early.
+   * RISER:
+   * Fires at exactly 80 seconds elapsed,
+   * which is 10 seconds remaining.
    */
 
   if(
@@ -2209,11 +3189,103 @@ function updatePopupStage(now){
 
   }
 
-  if(e>=90000){
+  /*
+   * At 0 seconds remaining, freeze the
+   * jumpscare and play the ending sound
+   * three times before the fake BSOD.
+   */
 
-    startUnpaid();
+  if(
+    e>=90000
+  ){
+
+    triggerRansomJumpscare();
 
   }
+
+}
+
+function triggerRansomJumpscare(){
+
+  if(jumpscareEnding)
+    return;
+
+  jumpscareEnding=true;
+
+  stage=9;
+
+  $('popupLayer').style.display='none';
+
+  $('jumpscareFreeze').style.display='flex';
+
+  stopAudio();
+
+  jumpscareSoundCount=0;
+
+  playJumpscareEnding();
+
+}
+
+function playJumpscareEnding(){
+
+  if(
+    jumpscareSoundCount>=3
+  ){
+
+    setTimeout(
+      ()=>{
+        startUnpaid(true);
+      },
+      150
+    );
+
+    return;
+
+  }
+
+  jumpscareSoundCount++;
+
+  try{
+
+    audio=
+      new Audio(
+        assets+
+        'ransom_attack_end.mp3?v=2'
+      );
+
+    audio.loop=false;
+
+    audio.volume=
+      SETTINGS.sfxVolume/100;
+
+    audio.onended=()=>{
+      playJumpscareEnding();
+    };
+
+    audio.onerror=()=>{
+      playJumpscareEnding();
+    };
+
+    audio.play().catch(
+      ()=>{
+
+        setTimeout(
+          playJumpscareEnding,
+          500
+        );
+
+      }
+    );
+
+  }catch{
+
+    setTimeout(
+      playJumpscareEnding,
+      500
+    );
+
+  }
+
 }
 
 function createStormPopup(){
@@ -2269,6 +3341,7 @@ function createStormPopup(){
     ></div>
 
     <div class="blackmsg">
+
       ${
         variants[
           randint(
@@ -2277,6 +3350,7 @@ function createStormPopup(){
           )
         ]
       }
+
     </div>
 
     <div
@@ -2292,6 +3366,7 @@ function createStormPopup(){
     .appendChild(p);
 
   stormPopups.push(p);
+
 }
 
 function startDecorativeStorm(){
@@ -2312,6 +3387,7 @@ function startDecorativeStorm(){
     createStormPopup();
 
   }
+
 }
 
 function updateStormPopups(now){
@@ -2345,30 +3421,34 @@ function updateStormPopups(now){
         copy[j],
         copy[i]
       ];
+
     }
 
     copy
       .slice(0,2)
-      .forEach(p=>{
+      .forEach(
+        p=>{
 
-        if(
-          p &&
-          p.parentNode
-        )
-          p.remove();
+          if(
+            p &&
+            p.parentNode
+          )
+            p.remove();
 
-        const index=
-          stormPopups.indexOf(p);
+          const index=
+            stormPopups.indexOf(p);
 
-        if(index>=0)
-          stormPopups.splice(
-            index,
-            1
-          );
+          if(index>=0)
+            stormPopups.splice(
+              index,
+              1
+            );
 
-      });
+        }
+      );
 
     stormRemovalAt=now;
+
   }
 
   if(
@@ -2381,7 +3461,9 @@ function updateStormPopups(now){
 
     stormCycleStart=now;
     stormRemovalAt=0;
+
   }
+
 }
 
 function finishPaid(){
@@ -2389,15 +3471,56 @@ function finishPaid(){
   if(paid)
     return;
 
+  /*
+   * Check the last-second quest BEFORE
+   * changing stageStart.
+   *
+   * The ransom lasts 90 seconds, so
+   * 89-90 seconds elapsed counts as
+   * paying during the last second.
+   */
+
+  const ransomElapsed=
+    performance.now()-
+    stageStart;
+
+  const paidAtLastSecond=
+    ransomElapsed>=89000 &&
+    ransomElapsed<90000;
+
   paid=true;
   stage=0;
+
+  if(
+    paidAtLastSecond
+  ){
+
+    questEvent(
+      'quick_tapper'
+    );
+
+  }
 
   stopAudio();
   stopMusic();
 
   resetGameObjects();
 
-  questEvent('pay');
+  /*
+   * Debt Collector is specifically
+   * for paying with the scattered coins.
+   * Gold Pot payment does not count.
+   */
+
+  if(
+    paymentMethod==='coins'
+  ){
+
+    questEvent(
+      'pay'
+    );
+
+  }
 
   show('end');
 
@@ -2409,6 +3532,7 @@ function finishPaid(){
 
   setTimeout(
     ()=>{
+
       if(
         $('end')
           .classList
@@ -2418,16 +3542,20 @@ function finishPaid(){
         intro();
 
       }
+
     },
     TIMINGS.thankYou
   );
+
 }
 
-function startUnpaid(){
+function startUnpaid(fromTimer=false){
 
   stage=7;
 
-  questEvent('ransom_survivor');
+  questEvent(
+    'ransom_survivor'
+  );
 
   stageStart=
     performance.now();
@@ -2446,11 +3574,16 @@ function startUnpaid(){
 
   $('bsod').style.opacity='1';
 
-  playAudio(
-    'ransom_attack_end.mp3',
-    false,
-    'sfx'
-  );
+  if(!fromTimer){
+
+    playAudio(
+      'ransom_attack_end.mp3',
+      false,
+      'sfx'
+    );
+
+  }
+
 }
 
 function updateUnpaid(now){
@@ -2466,7 +3599,9 @@ function updateUnpaid(now){
       e/TIMINGS.fakeBSOD;
 
     const percent=
-      Math.floor(p*100);
+      Math.floor(
+        p*100
+      );
 
     $('bsodfill').style.width=
       percent+'%';
@@ -2476,6 +3611,7 @@ function updateUnpaid(now){
       '% complete';
 
     return;
+
   }
 
   if(
@@ -2492,9 +3628,12 @@ function updateUnpaid(now){
       TIMINGS.fakeBoot;
 
     $('bsod').style.opacity=
-      String(1-p);
+      String(
+        1-p
+      );
 
     return;
+
   }
 
   $('bsod').style.opacity='1';
@@ -2518,6 +3657,7 @@ function updateUnpaid(now){
     true,
     'music'
   );
+
 }
 
 function createMiniNodes(){
@@ -2588,11 +3728,13 @@ function createMiniNodes(){
       .appendChild(node);
 
     miniNodes.push(node);
+
   }
 
   miniNextMove=
     performance.now()+
     TIMINGS.miniMove;
+
 }
 
 function positionMiniNode(node){
@@ -2622,6 +3764,7 @@ function positionMiniNode(node){
       )
     )+
     'px';
+
 }
 
 function moveMiniNodes(){
@@ -2637,6 +3780,7 @@ function moveMiniNodes(){
 
     }
   );
+
 }
 
 function updateMini(now){
@@ -2670,6 +3814,7 @@ function updateMini(now){
     miniNextMove=
       now+
       TIMINGS.miniMove;
+
   }
 
   if(
@@ -2680,6 +3825,7 @@ function updateMini(now){
     failMini();
 
   }
+
 }
 
 function finishMini(){
@@ -2701,22 +3847,48 @@ function finishMini(){
 
   miniNodes.forEach(
     n=>{
+
       if(
         n &&
         n.parentNode
       )
         n.remove();
+
     }
   );
 
   miniNodes=[];
 
-  questEvent('escape');
-  questEvent('signal');
+  questEvent(
+    'escape'
+  );
 
-  if(left<=3000){
+  questEvent(
+    'signal'
+  );
 
-    questEvent('close');
+  if(
+    left<=3000
+  ){
+
+    questEvent(
+      'close'
+    );
+
+  }
+
+  /*
+   * New clutch quest:
+   * strictly LESS than 1 second left.
+   */
+
+  if(
+    left<1000
+  ){
+
+    questEvent(
+      'last_second'
+    );
 
   }
 
@@ -2730,6 +3902,7 @@ function finishMini(){
 
   setTimeout(
     ()=>{
+
       if(
         $('end')
           .classList
@@ -2739,9 +3912,11 @@ function finishMini(){
         intro();
 
       }
+
     },
     TIMINGS.thankYou
   );
+
 }
 
 function failMini(){
@@ -2753,11 +3928,13 @@ function failMini(){
 
   miniNodes.forEach(
     n=>{
+
       if(
         n &&
         n.parentNode
       )
         n.remove();
+
     }
   );
 
@@ -2777,6 +3954,7 @@ function failMini(){
     false,
     'sfx'
   );
+
 }
 
 $('game').addEventListener(
