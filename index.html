@@ -224,19 +224,18 @@ button:active{transform:scale(.97)}
   background:rgba(0,0,0,.72);
 }
 
-#crucifixBindScene.active{
-  display:flex;
-}
+#crucifixBindScene.active{display:flex}
 
+/* Classic Crucifix: flattened glowing yellow sigil. */
 .bindSeal{
   position:absolute;
   left:50%;
-  top:58%;
-  width:230px;
-  height:230px;
-  border:6px solid #ffd900;
+  top:62%;
+  width:280px;
+  height:72px;
+  border:5px solid #ffd900;
   border-radius:50%;
-  transform:translate(-50%,-50%) scale(.15);
+  transform:translate(-50%,-50%) perspective(500px) rotateX(62deg) scale(.15);
   opacity:0;
   box-shadow:0 0 12px #ffd900,0 0 35px #ffb700,inset 0 0 20px #ffd900;
 }
@@ -252,14 +251,22 @@ button:active{transform:scale(.97)}
   border-radius:50%;
 }
 
-.bindSeal::before{
-  width:175px;
-  height:175px;
-}
+.bindSeal::before{width:220px;height:48px}
+.bindSeal::after{width:150px;height:30px}
 
-.bindSeal::after{
-  width:115px;
-  height:115px;
+/* Overgrown Crucifix: use the generated grassy sigil instead. */
+#bindGrassSigil{
+  position:absolute;
+  left:50%;
+  top:62%;
+  width:280px;
+  height:90px;
+  object-fit:contain;
+  transform:translate(-50%,-50%) perspective(500px) rotateX(62deg) scale(.15);
+  opacity:0;
+  z-index:2;
+  pointer-events:none;
+  filter:drop-shadow(0 0 5px #7dff5a) drop-shadow(0 0 15px #39b82b);
 }
 
 .bindRansom{
@@ -271,30 +278,20 @@ button:active{transform:scale(.97)}
   object-fit:contain;
   transform:translate(-50%,-50%);
   z-index:3;
-  filter:
-    drop-shadow(0 0 7px #ff2020)
-    drop-shadow(0 0 15px #ff2020);
+  filter:drop-shadow(0 0 7px #ff2020) drop-shadow(0 0 15px #ff2020);
 }
 
+/* Classic four chains. */
 .bindChain{
   position:absolute;
-  width:190px;
-  height:12px;
-  background:
-    repeating-linear-gradient(
-      90deg,
-      #fff36a 0px,
-      #ffd000 12px,
-      #fff36a 24px,
-      #d89d00 36px
-    );
+  width:150px;
+  height:10px;
+  background:repeating-linear-gradient(90deg,#fff36a 0px,#ffd000 10px,#fff36a 20px,#d89d00 30px);
   border:2px solid #ffe94a;
   border-radius:8px;
   z-index:4;
   opacity:0;
-  box-shadow:
-    0 0 8px #ffd000,
-    0 0 18px #ffb700;
+  box-shadow:0 0 8px #ffd000,0 0 18px #ffb700;
 }
 
 .bindChain::after{
@@ -311,32 +308,59 @@ button:active{transform:scale(.97)}
   box-shadow:0 0 8px #ffd000;
 }
 
+/* Chains begin at the visible edges of the flattened classic sigil. */
 .bindChain.top{
   left:50%;
-  top:calc(50% - 108px);
+  top:calc(62% - 78px);
   transform:translateX(-50%) rotate(90deg) scaleX(0);
   transform-origin:right center;
 }
 
 .bindChain.right{
-  right:calc(50% - 128px);
-  top:50%;
+  left:calc(50% + 42px);
+  top:62%;
   transform:translateY(-50%) rotate(180deg) scaleX(0);
   transform-origin:left center;
 }
 
 .bindChain.bottom{
   left:50%;
-  bottom:calc(50% - 108px);
+  top:calc(62% + 78px);
   transform:translateX(-50%) rotate(-90deg) scaleX(0);
   transform-origin:right center;
 }
 
 .bindChain.left{
-  left:calc(50% - 128px);
-  top:50%;
+  left:calc(50% - 192px);
+  top:62%;
   transform:translateY(-50%) scaleX(0);
   transform-origin:right center;
+}
+
+/* Overgrown: vines emerge from the two sides of the grassy sigil. */
+.bindVine{
+  position:absolute;
+  width:185px;
+  height:64px;
+  object-fit:contain;
+  z-index:4;
+  opacity:0;
+  pointer-events:none;
+  filter:drop-shadow(0 0 4px #5fba3a) drop-shadow(0 0 10px #2f7d22);
+}
+
+.bindVine.left{
+  left:calc(50% - 325px);
+  top:calc(62% - 32px);
+  transform:translateY(-50%) scaleX(0);
+  transform-origin:right center;
+}
+
+.bindVine.right{
+  right:calc(50% - 325px);
+  top:calc(62% - 32px);
+  transform:translateY(-50%) rotateY(180deg) scaleX(0);
+  transform-origin:left center;
 }
 
 #bindFlash{
@@ -349,119 +373,84 @@ button:active{transform:scale(.97)}
 }
 
 @keyframes bindSealAppear{
-  from{
-    opacity:0;
-    transform:translate(-50%,-50%) scale(.15);
-  }
-  to{
-    opacity:1;
-    transform:translate(-50%,-50%) scale(1);
-  }
+  from{opacity:0;transform:translate(-50%,-50%) perspective(500px) rotateX(62deg) scale(.15)}
+  to{opacity:1;transform:translate(-50%,-50%) perspective(500px) rotateX(62deg) scale(1)}
 }
 
 @keyframes bindSealPulse{
-  0%,100%{
-    box-shadow:
-      0 0 12px #ffd900,
-      0 0 35px #ffb700,
-      inset 0 0 20px #ffd900;
-  }
-  50%{
-    box-shadow:
-      0 0 24px #fff36a,
-      0 0 60px #ffd000,
-      inset 0 0 35px #fff36a;
-  }
+  0%,100%{box-shadow:0 0 12px #ffd900,0 0 35px #ffb700,inset 0 0 20px #ffd900}
+  50%{box-shadow:0 0 24px #fff36a,0 0 60px #ffd000,inset 0 0 35px #fff36a}
+}
+
+@keyframes grassSigilAppear{
+  from{opacity:0;transform:translate(-50%,-50%) perspective(500px) rotateX(62deg) scale(.15)}
+  to{opacity:1;transform:translate(-50%,-50%) perspective(500px) rotateX(62deg) scale(1)}
+}
+
+@keyframes grassSigilPulse{
+  0%,100%{filter:drop-shadow(0 0 5px #7dff5a) drop-shadow(0 0 15px #39b82b)}
+  50%{filter:drop-shadow(0 0 10px #b6ff8c) drop-shadow(0 0 24px #55d63b)}
 }
 
 @keyframes bindRansomHold{
-  0%{
-    transform:translate(-50%,-50%) scale(.7);
-    opacity:0;
-  }
-  100%{
-    transform:translate(-50%,-50%) scale(1);
-    opacity:1;
-  }
+  0%{transform:translate(-50%,-50%) scale(.7);opacity:0}
+  100%{transform:translate(-50%,-50%) scale(1);opacity:1}
 }
 
 @keyframes chainLeft{
-  0%{
-    opacity:0;
-    transform:translateY(-50%) scaleX(0);
-  }
+  0%{opacity:0;transform:translateY(-50%) scaleX(0)}
   20%{opacity:1}
-  100%{
-    opacity:1;
-    transform:translateY(-50%) scaleX(1);
-  }
+  100%{opacity:1;transform:translateY(-50%) scaleX(1)}
 }
 
 @keyframes chainRight{
-  0%{
-    opacity:0;
-    transform:translateY(-50%) rotate(180deg) scaleX(0);
-  }
+  0%{opacity:0;transform:translateY(-50%) rotate(180deg) scaleX(0)}
   20%{opacity:1}
-  100%{
-    opacity:1;
-    transform:translateY(-50%) rotate(180deg) scaleX(1);
-  }
+  100%{opacity:1;transform:translateY(-50%) rotate(180deg) scaleX(1)}
 }
 
 @keyframes chainTop{
-  0%{
-    opacity:0;
-    transform:translateX(-50%) rotate(90deg) scaleX(0);
-  }
+  0%{opacity:0;transform:translateX(-50%) rotate(90deg) scaleX(0)}
   20%{opacity:1}
-  100%{
-    opacity:1;
-    transform:translateX(-50%) rotate(90deg) scaleX(1);
-  }
+  100%{opacity:1;transform:translateX(-50%) rotate(90deg) scaleX(1)}
 }
 
 @keyframes chainBottom{
-  0%{
-    opacity:0;
-    transform:translateX(-50%) rotate(-90deg) scaleX(0);
-  }
+  0%{opacity:0;transform:translateX(-50%) rotate(-90deg) scaleX(0)}
   20%{opacity:1}
-  100%{
-    opacity:1;
-    transform:translateX(-50%) rotate(-90deg) scaleX(1);
-  }
+  100%{opacity:1;transform:translateX(-50%) rotate(-90deg) scaleX(1)}
+}
+
+@keyframes vineLeft{
+  0%{opacity:0;transform:translateY(-50%) scaleX(0)}
+  15%{opacity:1}
+  100%{opacity:1;transform:translateY(-50%) scaleX(1)}
+}
+
+@keyframes vineRight{
+  0%{opacity:0;transform:translateY(-50%) rotateY(180deg) scaleX(0)}
+  15%{opacity:1}
+  100%{opacity:1;transform:translateY(-50%) rotateY(180deg) scaleX(1)}
 }
 
 @keyframes ransomLift{
-  0%{
-    transform:translate(-50%,-50%);
-  }
-  100%{
-    transform:translate(-50%,calc(-50% - 6px));
-  }
+  0%{transform:translate(-50%,-50%)}
+  100%{transform:translate(-50%,calc(-50% - 6px))}
 }
 
 @keyframes ransomPullDown{
-  0%{
-    transform:translate(-50%,calc(-50% - 6px));
-    opacity:1;
-  }
-  100%{
-    transform:translate(-50%,120vh);
-    opacity:.85;
-  }
+  0%{transform:translate(-50%,calc(-50% - 6px));opacity:1}
+  100%{transform:translate(-50%,120vh);opacity:.85}
 }
 
 @keyframes sealPullDown{
-  0%{
-    transform:translate(-50%,-50%) scale(1);
-    opacity:1;
-  }
-  100%{
-    transform:translate(-50%,70vh) scale(.65);
-    opacity:0;
-  }
+  0%{transform:translate(-50%,-50%) perspective(500px) rotateX(62deg) scale(1);opacity:1}
+  100%{transform:translate(-50%,70vh) perspective(500px) rotateX(62deg) scale(.65);opacity:0}
+}
+
+@keyframes grassSigilPullDown{
+  0%{transform:translate(-50%,-50%) perspective(500px) rotateX(62deg) scale(1);opacity:1}
+  100%{transform:translate(-50%,70vh) perspective(500px) rotateX(62deg) scale(.65);opacity:0}
 }
 
 @keyframes bindFlash{
@@ -834,10 +823,24 @@ button:active{transform:scale(.97)}
 
     <div class="bindSeal"></div>
 
+    <img
+      id="bindGrassSigil"
+      src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/grass_sigil.png?v=2"
+    >
+
     <div class="bindChain top"></div>
     <div class="bindChain right"></div>
     <div class="bindChain bottom"></div>
     <div class="bindChain left"></div>
+
+    <img
+      class="bindVine left"
+      src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/crucifix_vines.png?v=2"
+    >
+    <img
+      class="bindVine right"
+      src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/crucifix_vines.png?v=2"
+    >
 
     <img
       id="bindRansom"
@@ -1853,6 +1856,29 @@ function buyItem(item){
 
 }
 
+function equipOvergrownCrucifix(){
+
+  if(!DATA.ownedCosmetics.includes('crucifix_overgrown')){
+    toast('You do not own the Overgrown Crucifix.');
+    return;
+  }
+
+  DATA.selectedCrucifix='crucifix_overgrown';
+  saveData();
+  renderInventory();
+  toast('Overgrown Crucifix equipped!');
+  shopTab(currentShopTab);
+}
+
+function unequipOvergrownCrucifix(){
+
+  DATA.selectedCrucifix='crucifix_default';
+  saveData();
+  renderInventory();
+  toast('Classic Crucifix equipped!');
+  shopTab(currentShopTab);
+}
+
 let currentShopTab='items';
 
 function shopTab(tab){
@@ -1905,45 +1931,60 @@ function shopTab(tab){
       SHOP.cosmetics.map(item=>`
 
         <div class="shopItem">
-
           <h3>${item.name}</h3>
-
           <p>${item.desc}</p>
-
           ${
             owned(item.id)
-
-              ? '<div class="owned">OWNED</div>'
-
+              ? (
+                  item.id==='crucifix_overgrown'
+                    ? (
+                        DATA.selectedCrucifix==='crucifix_overgrown'
+                          ? `
+                              <div class="owned">EQUIPPED</div>
+                              <button
+                                onclick="unequipOvergrownCrucifix()"
+                              >
+                                UNEQUIP
+                              </button>
+                            `
+                          : `
+                              <div class="owned">OWNED</div>
+                              <button
+                                onclick="equipOvergrownCrucifix()"
+                              >
+                                EQUIP
+                              </button>
+                            `
+                      )
+                    : '<div class="owned">OWNED</div>'
+                )
               : `
-                <button
-                  onclick="buyItem(
-                    SHOP.cosmetics.find(
-                      x=>x.id==='${item.id}'
-                    )
-                  )"
-                >
-                  ${
-                    item.currency==='stardust'
-                      ? '✨'
-                      : '💰'
-                  }
-                  ${item.price}
-                  ${
-                    item.currency==='stardust'
-                      ? 'SD'
-                      : 'RP'
-                  }
-                </button>
-              `
+                  <button
+                    onclick="buyItem(
+                      SHOP.cosmetics.find(
+                        x=>x.id==='${item.id}'
+                      )
+                    )"
+                  >
+                    ${
+                      item.currency==='stardust'
+                        ? '✨'
+                        : '💰'
+                    }
+                    ${item.price}
+                    ${
+                      item.currency==='stardust'
+                        ? 'SD'
+                        : 'RP'
+                    }
+                  </button>
+                `
           }
-
         </div>
 
       `).join('');
 
     return;
-
   }
 
   if(tab==='gallery'){
@@ -2516,6 +2557,14 @@ $('cameraButton').addEventListener(
 
 /* INVENTORY */
 
+function getCrucifixRender(){
+
+  return DATA.selectedCrucifix==='crucifix_overgrown' &&
+         DATA.ownedCosmetics.includes('crucifix_overgrown')
+    ? assets+'crucifix_overgrown.png?v=2'
+    : assets+'crucifix.png?v=2';
+}
+
 function resetInventory(){
 
   inventoryCrucifix=
@@ -2547,6 +2596,12 @@ function renderInventory(){
 
   if(!inv)
     return;
+
+  const crucifixImage=
+    crucifix.querySelector('img');
+
+  if(crucifixImage)
+    crucifixImage.src=getCrucifixRender();
 
   const visible=
     stage>=1 &&
@@ -2756,154 +2811,168 @@ function bindRansom(){
   clearGameObjects();
 
   addStardust(3);
-
   questEvent('crucifix');
-
   showBadge();
 
-  const scene=
-    $('crucifixBindScene');
+  const scene=$('crucifixBindScene');
+  const ransom=$('bindRansom');
+  const seal=scene ? scene.querySelector('.bindSeal') : null;
+  const grassSigil=$('bindGrassSigil');
+  const chains=scene ? scene.querySelectorAll('.bindChain') : [];
+  const vines=scene ? scene.querySelectorAll('.bindVine') : [];
+  const flash=$('bindFlash');
 
-  const ransom=
-    $('bindRansom');
-
-  const seal=
-    scene.querySelector('.bindSeal');
-
-  const chains=
-    scene.querySelectorAll('.bindChain');
-
-  const flash=
-    $('bindFlash');
-
-  if(
-    !scene ||
-    !ransom ||
-    !seal ||
-    !flash
-  ){
-
+  if(!scene || !ransom || !seal || !grassSigil || !flash){
     intro();
-
     return;
-
   }
 
   scene.classList.add('active');
 
-  /*
-   * Reset all inline animation overrides.
-   * clearGameObjects() may have been called
-   * during a previous scene, so the chains
-   * need their CSS animations restored.
-   */
+  /* Ransom changes to his Crucifix-bound face for the whole bind. */
+  ransom.src=assets+'ransom_crucifix.png?v=2';
+  ransom.style.animation='bindRansomHold .45s ease-out forwards';
 
-  ransom.style.animation=
-    'bindRansomHold .45s ease-out forwards';
+  /* Reset both visual variants. */
+  seal.style.animation='none';
+  seal.style.opacity='0';
+  grassSigil.style.animation='none';
+  grassSigil.style.opacity='0';
 
-  seal.style.animation=
-    'bindSealAppear .45s ease-out forwards,'+
-    'bindSealPulse 1.1s .45s ease-in-out infinite';
+  chains.forEach(chain=>{
+    chain.style.opacity='0';
+    chain.style.animation='';
+  });
 
-  chains.forEach(
-    chain=>{
-
-      chain.style.opacity='0';
-      chain.style.animation='';
-
-    }
-  );
+  vines.forEach(vine=>{
+    vine.style.opacity='0';
+    vine.style.animation='';
+  });
 
   flash.style.animation='none';
   flash.style.opacity='0';
 
-  /*
-   * Ransom screams as the Crucifix binding
-   * starts.
-   */
+  const overgrown=
+    DATA.selectedCrucifix==='crucifix_overgrown' &&
+    DATA.ownedCosmetics.includes('crucifix_overgrown');
 
-  playAudio(
-    'ransom_crucifix.mp3',
-    false,
-    'sfx'
-  );
+  if(overgrown){
 
-  /*
-   * Lift Ransom approximately 6 pixels.
-   */
+    /* Grass sigil appears under Ransom. No Crucifix render is shown. */
+    grassSigil.style.animation=
+      'grassSigilAppear .45s ease-out forwards,'+
+      'grassSigilPulse 1.1s .45s ease-in-out infinite';
 
-  setTimeout(
-    ()=>{
+  }else{
 
-      ransom.style.animation=
-        'ransomLift .28s ease-out forwards';
+    /* Classic binding keeps the original yellow flattened sigil. */
+    seal.style.animation=
+      'bindSealAppear .45s ease-out forwards,'+
+      'bindSealPulse 1.1s .45s ease-in-out infinite';
 
-    },
-    1150
-  );
+    /* Classic chains latch around the sigil immediately. */
+    chains.forEach((chain,index)=>{
+      const names=['chainTop','chainRight','chainBottom','chainLeft'];
+      chain.style.animation=
+        names[index]+' .42s '+(.35+index*.13).toFixed(2)+'s ease-out forwards';
+    });
+  }
 
-  /*
-   * Pull Ransom and the seal downward.
-   */
+  /* Ransom screams as the binding begins. */
+  playAudio('ransom_crucifix.mp3',false,'sfx');
 
-  setTimeout(
-    ()=>{
+  if(overgrown){
 
+    /* At 2 seconds, the vines shoot out from the sides of the grassy sigil. */
+    setTimeout(()=>{
+      vines.forEach((vine,index)=>{
+        vine.style.animation=
+          (index===0 ? 'vineLeft' : 'vineRight')+
+          ' .5s ease-out forwards';
+      });
+    },2000);
+
+    /* At 3 seconds, raise Ransom about 6 pixels and hold him there. */
+    setTimeout(()=>{
+      ransom.style.animation='ransomLift .28s ease-out forwards';
+    },3000);
+
+    /* At 4 seconds, the vines and Ransom are dragged downward together. */
+    setTimeout(()=>{
       ransom.style.animation=
         'ransomPullDown 1.15s cubic-bezier(.65,0,.95,.35) forwards';
+      grassSigil.style.animation=
+        'grassSigilPullDown 1.15s cubic-bezier(.65,0,.95,.35) forwards';
+      vines.forEach(vine=>{
+        vine.style.animation=
+          (vine.classList.contains('left') ? 'vineLeft' : 'vineRight')+
+          ' .35s ease-in reverse forwards';
+      });
+    },4000);
 
-      seal.style.animation=
-        'sealPullDown 1.15s ease-in forwards';
+    setTimeout(()=>{
+      flash.style.animation='bindFlash .38s ease-out forwards';
+    },5150);
 
-    },
-    1450
-  );
-
-  /*
-   * Bright flash immediately after the bind.
-   */
-
-  setTimeout(
-    ()=>{
-
-      flash.style.animation=
-        'bindFlash .38s ease-out forwards';
-
-    },
-    2300
-  );
-
-  /*
-   * Return to the main menu after the
-   * binding sequence finishes.
-   */
-
-  setTimeout(
-    ()=>{
-
+    setTimeout(()=>{
       scene.classList.remove('active');
-
       ransom.style.animation='none';
+      ransom.src=assets+'ransom_idle.png?v=2';
       seal.style.animation='none';
-
+      grassSigil.style.animation='none';
+      grassSigil.style.opacity='0';
       flash.style.animation='none';
       flash.style.opacity='0';
-
-      chains.forEach(
-        chain=>{
-
-          chain.style.opacity='0';
-          chain.style.animation='';
-
-        }
-      );
-
+      chains.forEach(chain=>{
+        chain.style.opacity='0';
+        chain.style.animation='';
+      });
+      vines.forEach(vine=>{
+        vine.style.opacity='0';
+        vine.style.animation='';
+      });
       intro();
+    },5550);
 
-    },
-    2850
-  );
+    return;
+  }
 
+  /* Classic binding timing remains unchanged. */
+  setTimeout(()=>{
+    ransom.style.animation='ransomLift .28s ease-out forwards';
+  },1150);
+
+  setTimeout(()=>{
+    ransom.style.animation=
+      'ransomPullDown 1.15s cubic-bezier(.65,0,.95,.35) forwards';
+    seal.style.animation=
+      'sealPullDown 1.15s ease-in forwards';
+    chains.forEach(chain=>chain.style.opacity='0');
+  },1450);
+
+  setTimeout(()=>{
+    flash.style.animation='bindFlash .38s ease-out forwards';
+  },2300);
+
+  setTimeout(()=>{
+    scene.classList.remove('active');
+    ransom.style.animation='none';
+    ransom.src=assets+'ransom_idle.png?v=2';
+    seal.style.animation='none';
+    grassSigil.style.animation='none';
+    grassSigil.style.opacity='0';
+    flash.style.animation='none';
+    flash.style.opacity='0';
+    chains.forEach(chain=>{
+      chain.style.opacity='0';
+      chain.style.animation='';
+    });
+    vines.forEach(vine=>{
+      vine.style.opacity='0';
+      vine.style.animation='';
+    });
+    intro();
+  },2850);
 }
 
 function showBadge(){
@@ -2945,6 +3014,12 @@ function clearGameObjects(){
     const bindRansom=
       $('bindRansom');
 
+    const bindGrassSigil=
+      $('bindGrassSigil');
+
+    const bindVines=
+      bindScene.querySelectorAll('.bindVine');
+
     const bindSeal=
       bindScene.querySelector('.bindSeal');
 
@@ -2954,8 +3029,20 @@ function clearGameObjects(){
     const bindChains=
       bindScene.querySelectorAll('.bindChain');
 
-    if(bindRansom)
+    if(bindRansom){
       bindRansom.style.animation='none';
+      bindRansom.src=assets+'ransom_idle.png?v=2';
+    }
+
+    if(bindGrassSigil){
+      bindGrassSigil.style.animation='none';
+      bindGrassSigil.style.opacity='0';
+    }
+
+    bindVines.forEach(vine=>{
+      vine.style.opacity='0';
+      vine.style.animation='';
+    });
 
     if(bindSeal)
       bindSeal.style.animation='none';
