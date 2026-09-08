@@ -95,6 +95,74 @@ button:active{transform:scale(.97)}
   touch-action:manipulation
 }
 
+/* INVENTORY */
+#inventory{
+  position:absolute;
+  right:12px;
+  bottom:12px;
+  z-index:120;
+  display:none;
+  gap:8px;
+  align-items:flex-end;
+}
+
+.inventorySlot{
+  width:72px;
+  height:72px;
+  border:2px solid #a88b61;
+  background:#c9ad7a;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  cursor:pointer;
+  touch-action:manipulation;
+  box-shadow:0 2px 8px #000;
+}
+
+.inventorySlot.selected{
+  border-color:#fff;
+  box-shadow:0 0 12px #fff;
+}
+
+.inventorySlot img{
+  width:58px;
+  height:58px;
+  object-fit:contain;
+  pointer-events:none;
+}
+
+.inventoryCount{
+  position:absolute;
+  right:3px;
+  bottom:2px;
+  min-width:19px;
+  height:19px;
+  padding:1px 4px;
+  border-radius:10px;
+  background:#111;
+  color:#fff;
+  font-size:11px;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+#throwButton{
+  display:none;
+  position:absolute;
+  right:12px;
+  bottom:92px;
+  z-index:121;
+  background:#b78d52;
+  border-color:#e4c28e;
+  color:#000;
+  font-size:14px;
+  padding:9px 14px;
+}
+
 #cameraButton{
   position:absolute;
   left:12px;
@@ -504,7 +572,36 @@ button:active{transform:scale(.97)}
     <img src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/ransom_attack.png?v=2">
   </div>
 
+  <div id="inventory">
+
+    <div id="crucifixInventory"
+         class="inventorySlot"
+         style="display:none">
+
+      <img src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/crucifix.png?v=2">
+
+      <div class="inventoryCount"
+           id="crucifixCount">0</div>
+
+    </div>
+
+    <div id="goldPotInventory"
+         class="inventorySlot"
+         style="display:none">
+
+      <img src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/gold_pot.png?v=2">
+
+      <div class="inventoryCount"
+           id="goldPotCount">0</div>
+
+    </div>
+
+  </div>
+
+  <button id="throwButton">THROW</button>
+
   <button id="cameraButton">📷 TAKE PHOTO</button>
+
   <button id="safeExit">EXIT</button>
 </div>
 
@@ -667,6 +764,10 @@ let crucifixesFound=0;
 let ransomUsedCrucifix=false;
 
 let paymentMethod='none';
+
+let inventoryCrucifix=0;
+let inventoryGoldPot=0;
+let selectedInventoryItem='none';
 
 let stormPopups=[];
 let stormCycleStart=0;
@@ -1924,17 +2025,7 @@ function renderGallery(){
 
               <img
                 src="${photo.data}"
-                style="#watermark{
-  position:fixed;
-  left:8px;
-  bottom:6px;
-  z-index:9999;
-  opacity:.5;
-  font-size:11px;
-  color:#fff;
-  pointer-events:none;
-  user-select:none;
-}
+                style="
                   width:100%;
                   display:block;
                   background:#000
@@ -2146,21 +2237,212 @@ $('cameraButton').addEventListener(
   }
 );
 
+/* INVENTORY */
+
+function resetInventory(){
+
+  inventoryCrucifix=
+    DATA.ownedItems.includes('crucifix')
+      ? 1
+      : 0;
+
+  inventoryGoldPot=0;
+
+  selectedInventoryItem='none';
+
+  renderInventory();
+
+}
+
+function renderInventory(){
+
+  const inv=
+    $('inventory');
+
+  const crucifix=
+    $('crucifixInventory');
+
+  const pot=
+    $('goldPotInventory');
+
+  const throwButton=
+    $('throwButton');
+
+  if(!inv)
+    return;
+
+  const visible=
+    stage>=1 &&
+    stage<=6;
+
+  inv.style.display=
+    visible &&
+    (
+      inventoryCrucifix>0 ||
+      inventoryGoldPot>0
+    )
+      ? 'flex'
+      : 'none';
+
+  crucifix.style.display=
+    inventoryCrucifix>0
+      ? 'flex'
+      : 'none';
+
+  pot.style.display=
+    inventoryGoldPot>0
+      ? 'flex'
+      : 'none';
+
+  $('crucifixCount').textContent=
+    inventoryCrucifix;
+
+  $('goldPotCount').textContent=
+    inventoryGoldPot;
+
+  crucifix.classList.toggle(
+    'selected',
+    selectedInventoryItem==='crucifix'
+  );
+
+  pot.classList.toggle(
+    'selected',
+    selectedInventoryItem==='gold_pot'
+  );
+
+  throwButton.style.display=
+    selectedInventoryItem==='gold_pot' &&
+    inventoryGoldPot>0 &&
+    stage===6 &&
+    !paid
+      ? 'block'
+      : 'none';
+
+}
+
+function selectCrucifix(){
+
+  if(
+    inventoryCrucifix<=0 ||
+    stage!==6 ||
+    paid
+  )
+    return;
+
+  selectedInventoryItem='crucifix';
+
+  renderInventory();
+
+  useCrucifix();
+
+}
+
+function selectGoldPot(){
+
+  if(
+    inventoryGoldPot<=0 ||
+    stage!==6 ||
+    paid
+  )
+    return;
+
+  selectedInventoryItem='gold_pot';
+
+  renderInventory();
+
+  toast(
+    'Gold Pot selected. Tap THROW!'
+  );
+
+}
+
+function throwGoldPot(){
+
+  if(
+    inventoryGoldPot<=0 ||
+    selectedInventoryItem!=='gold_pot' ||
+    stage!==6 ||
+    paid
+  )
+    return;
+
+  inventoryGoldPot--;
+
+  selectedInventoryItem='none';
+
+  paymentMethod='gold_pot';
+
+  balance=0;
+
+  const text=
+    $('balanceText');
+
+  if(text)
+    text.textContent='0';
+
+  toast(
+    'GOLD POT! Ransom paid!'
+  );
+
+  questEvent(
+    'gold_pot'
+  );
+
+  renderInventory();
+
+  finishPaid();
+
+}
+
+$('crucifixInventory').addEventListener(
+  'pointerdown',
+  ev=>{
+
+    ev.stopPropagation();
+
+    selectCrucifix();
+
+  }
+);
+
+$('goldPotInventory').addEventListener(
+  'pointerdown',
+  ev=>{
+
+    ev.stopPropagation();
+
+    selectGoldPot();
+
+  }
+);
+
+$('throwButton').addEventListener(
+  'pointerdown',
+  ev=>{
+
+    ev.stopPropagation();
+
+    throwGoldPot();
+
+  }
+);
+
 function useCrucifix(){
 
   if(
-    !DATA.ownedItems.includes('crucifix')
-  ){
-
-    toast(
-      'You need the Crucifix from the Shop!'
-    );
-
+    inventoryCrucifix<=0 ||
+    stage!==6 ||
+    paid
+  )
     return;
 
-  }
+  inventoryCrucifix--;
+
+  selectedInventoryItem='none';
 
   ransomUsedCrucifix=true;
+
+  renderInventory();
 
   const roll=
     Math.random();
@@ -2328,6 +2610,12 @@ function clearGameObjects(){
       x=>x.remove()
     );
 
+  selectedInventoryItem='none';
+
+  $('inventory').style.display='none';
+
+  $('throwButton').style.display='none';
+
 }
 
 function resetGameObjects(){
@@ -2352,6 +2640,8 @@ function resetGameObjects(){
 
   jumpscareEnding=false;
   jumpscareSoundCount=0;
+
+  selectedInventoryItem='none';
 
 }
 
@@ -2383,6 +2673,8 @@ function startGame(){
   ransomUsedCrucifix=false;
 
   paymentMethod='none';
+
+  resetInventory();
 
   $('cameraButton').style.display=
     DATA.ownedItems.includes('camera')
@@ -2723,6 +3015,10 @@ function beginRansom(){
 
   paymentMethod='none';
 
+  selectedInventoryItem='none';
+
+  renderInventory();
+
   $('popupLayer').style.display='block';
 
   createMainPopup();
@@ -2882,10 +3178,10 @@ function spawnGoldPot(){
   /*
    * Very rare Gold Pot:
    * 2% chance each ransom encounter.
-   * The pot instantly clears the 500 ransom.
    *
-   * Asset:
-   * gold_pot.png
+   * The pot is added to the player's
+   * inventory instead of immediately
+   * paying the ransom.
    */
 
   if(
@@ -2914,47 +3210,29 @@ function spawnGoldPot(){
 
       ev.stopPropagation();
 
-      useGoldPot(pot);
+      if(
+        paid ||
+        goldPotFound
+      )
+        return;
+
+      goldPotFound=true;
+
+      inventoryGoldPot++;
+
+      pot.remove();
+
+      toast(
+        'Gold Pot added to inventory!'
+      );
+
+      renderInventory();
 
     }
   );
 
   $('popupLayer')
     .appendChild(pot);
-
-}
-
-function useGoldPot(pot){
-
-  if(
-    paid ||
-    goldPotFound
-  )
-    return;
-
-  goldPotFound=true;
-
-  paymentMethod='gold_pot';
-
-  balance=0;
-
-  const text=
-    $('balanceText');
-
-  if(text)
-    text.textContent='0';
-
-  pot.remove();
-
-  toast(
-    'GOLD POT! Ransom paid!'
-  );
-
-  questEvent(
-    'gold_pot'
-  );
-
-  finishPaid();
 
 }
 
@@ -2967,9 +3245,6 @@ function spawnCrucifixDrops(){
    * Two independent chances are used,
    * allowing two Crucifixes to be found
    * in the same playthrough.
-   *
-   * Asset:
-   * crucifix.png
    */
 
   if(
@@ -3053,13 +3328,17 @@ function collectCrucifixDrop(c){
 
   crucifixesFound++;
 
+  inventoryCrucifix++;
+
   c.remove();
 
   toast(
-    'Crucifix found! '+
+    'Crucifix added to inventory! '+
     crucifixesFound+
-    '/2'
+    '/2 found'
   );
+
+  renderInventory();
 
   if(
     crucifixesFound>=2
@@ -3481,15 +3760,6 @@ function finishPaid(){
   if(paid)
     return;
 
-  /*
-   * Check the last-second quest BEFORE
-   * changing stageStart.
-   *
-   * The ransom lasts 90 seconds, so
-   * 89-90 seconds elapsed counts as
-   * paying during the last second.
-   */
-
   const ransomElapsed=
     performance.now()-
     stageStart;
@@ -3515,12 +3785,6 @@ function finishPaid(){
   stopMusic();
 
   resetGameObjects();
-
-  /*
-   * Debt Collector is specifically
-   * for paying with the scattered coins.
-   * Gold Pot payment does not count.
-   */
 
   if(
     paymentMethod==='coins'
@@ -3887,11 +4151,6 @@ function finishMini(){
 
   }
 
-  /*
-   * New clutch quest:
-   * strictly LESS than 1 second left.
-   */
-
   if(
     left<1000
   ){
@@ -3967,23 +4226,6 @@ function failMini(){
 
 }
 
-$('game').addEventListener(
-  'pointerdown',
-  ev=>{
-
-    if(
-      stage===6 &&
-      DATA.ownedItems.includes('crucifix') &&
-      ev.target===$('game')
-    ){
-
-      useCrucifix();
-
-    }
-
-  }
-);
-
 window.addEventListener(
   'resize',
   ()=>{
@@ -4025,5 +4267,5 @@ refreshCurrency();
 intro();
 
 </script>
-</body><div id="watermark">ScripterSketch</div>
+</body>
 </html>
