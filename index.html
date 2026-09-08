@@ -281,10 +281,10 @@ button:active{transform:scale(.97)}
   filter:drop-shadow(0 0 7px #ff2020) drop-shadow(0 0 15px #ff2020);
 }
 
-/* Classic four chains. */
+/* Classic chains: all restraints terminate directly at Ransom's sides. */
 .bindChain{
   position:absolute;
-  width:150px;
+  width:145px;
   height:10px;
   background:repeating-linear-gradient(90deg,#fff36a 0px,#ffd000 10px,#fff36a 20px,#d89d00 30px);
   border:2px solid #ffe94a;
@@ -308,36 +308,36 @@ button:active{transform:scale(.97)}
   box-shadow:0 0 8px #ffd000;
 }
 
-/* Chains begin at the visible edges of the flattened classic sigil. */
+/* Two restraints on each side, with their inner ends touching Ransom. */
 .bindChain.top{
-  left:50%;
-  top:calc(62% - 78px);
-  transform:translateX(-50%) rotate(90deg) scaleX(0);
-  transform-origin:right center;
-}
-
-.bindChain.right{
-  left:calc(50% + 42px);
-  top:62%;
-  transform:translateY(-50%) rotate(180deg) scaleX(0);
-  transform-origin:left center;
-}
-
-.bindChain.bottom{
-  left:50%;
-  top:calc(62% + 78px);
-  transform:translateX(-50%) rotate(-90deg) scaleX(0);
-  transform-origin:right center;
-}
-
-.bindChain.left{
-  left:calc(50% - 192px);
-  top:62%;
+  left:calc(50% - 260px);
+  top:calc(50% - 54px);
   transform:translateY(-50%) scaleX(0);
   transform-origin:right center;
 }
 
-/* Overgrown: vines emerge from the two sides of the grassy sigil. */
+.bindChain.bottom{
+  left:calc(50% - 260px);
+  top:calc(50% + 54px);
+  transform:translateY(-50%) scaleX(0);
+  transform-origin:right center;
+}
+
+.bindChain.left{
+  left:calc(50% + 115px);
+  top:calc(50% - 54px);
+  transform:translateY(-50%) rotate(180deg) scaleX(0);
+  transform-origin:left center;
+}
+
+.bindChain.right{
+  left:calc(50% + 115px);
+  top:calc(50% + 54px);
+  transform:translateY(-50%) rotate(180deg) scaleX(0);
+  transform-origin:left center;
+}
+
+/* Overgrown vines: their inner ends also touch Ransom's sides. */
 .bindVine{
   position:absolute;
   width:185px;
@@ -350,15 +350,15 @@ button:active{transform:scale(.97)}
 }
 
 .bindVine.left{
-  left:calc(50% - 325px);
-  top:calc(62% - 32px);
+  left:calc(50% - 300px);
+  top:calc(50% - 34px);
   transform:translateY(-50%) scaleX(0);
   transform-origin:right center;
 }
 
 .bindVine.right{
-  right:calc(50% - 325px);
-  top:calc(62% - 32px);
+  left:calc(50% + 115px);
+  top:calc(50% - 34px);
   transform:translateY(-50%) rotateY(180deg) scaleX(0);
   transform-origin:left center;
 }
@@ -410,15 +410,15 @@ button:active{transform:scale(.97)}
 }
 
 @keyframes chainTop{
-  0%{opacity:0;transform:translateX(-50%) rotate(90deg) scaleX(0)}
+  0%{opacity:0;transform:translateY(-50%) scaleX(0)}
   20%{opacity:1}
-  100%{opacity:1;transform:translateX(-50%) rotate(90deg) scaleX(1)}
+  100%{opacity:1;transform:translateY(-50%) scaleX(1)}
 }
 
 @keyframes chainBottom{
-  0%{opacity:0;transform:translateX(-50%) rotate(-90deg) scaleX(0)}
+  0%{opacity:0;transform:translateY(-50%) rotate(180deg) scaleX(0)}
   20%{opacity:1}
-  100%{opacity:1;transform:translateX(-50%) rotate(-90deg) scaleX(1)}
+  100%{opacity:1;transform:translateY(-50%) rotate(180deg) scaleX(1)}
 }
 
 @keyframes vineLeft{
@@ -431,6 +431,26 @@ button:active{transform:scale(.97)}
   0%{opacity:0;transform:translateY(-50%) rotateY(180deg) scaleX(0)}
   15%{opacity:1}
   100%{opacity:1;transform:translateY(-50%) rotateY(180deg) scaleX(1)}
+}
+
+@keyframes chainPullLeft{
+  from{transform:translateY(-50%) scaleX(1);opacity:1}
+  to{transform:translateY(120vh) scaleX(1);opacity:.9}
+}
+
+@keyframes chainPullRight{
+  from{transform:translateY(-50%) rotate(180deg) scaleX(1);opacity:1}
+  to{transform:translateY(120vh) rotate(180deg) scaleX(1);opacity:.9}
+}
+
+@keyframes vinePullLeft{
+  from{transform:translateY(-50%) scaleX(1);opacity:1}
+  to{transform:translateY(120vh) scaleX(1);opacity:.9}
+}
+
+@keyframes vinePullRight{
+  from{transform:translateY(-50%) rotateY(180deg) scaleX(1);opacity:1}
+  to{transform:translateY(120vh) rotateY(180deg) scaleX(1);opacity:.9}
 }
 
 @keyframes ransomLift{
@@ -2862,7 +2882,7 @@ function bindRansom(){
       'bindSealAppear .45s ease-out forwards,'+
       'bindSealPulse 1.1s .45s ease-in-out infinite';
 
-    /* Classic chains latch around the sigil immediately. */
+    /* Classic chains shoot inward from both sides and finish against Ransom. */
     chains.forEach((chain,index)=>{
       const names=['chainTop','chainRight','chainBottom','chainLeft'];
       chain.style.animation=
@@ -2875,7 +2895,7 @@ function bindRansom(){
 
   if(overgrown){
 
-    /* At 2 seconds, the vines shoot out from the sides of the grassy sigil. */
+    /* At 2 seconds, the vines shoot inward from both sides and latch onto Ransom. */
     setTimeout(()=>{
       vines.forEach((vine,index)=>{
         vine.style.animation=
@@ -2884,27 +2904,22 @@ function bindRansom(){
       });
     },2000);
 
-    /* At 3 seconds, raise Ransom about 6 pixels and hold him there. */
-    setTimeout(()=>{
-      ransom.style.animation='ransomLift .28s ease-out forwards';
-    },3000);
-
-    /* At 4 seconds, the vines and Ransom are dragged downward together. */
+    /* At 3 seconds, Ransom is pulled under the screen; the vines follow him. */
     setTimeout(()=>{
       ransom.style.animation=
         'ransomPullDown 1.15s cubic-bezier(.65,0,.95,.35) forwards';
       grassSigil.style.animation=
         'grassSigilPullDown 1.15s cubic-bezier(.65,0,.95,.35) forwards';
-      vines.forEach(vine=>{
+      vines.forEach((vine,index)=>{
         vine.style.animation=
-          (vine.classList.contains('left') ? 'vineLeft' : 'vineRight')+
-          ' .35s ease-in reverse forwards';
+          (index===0 ? 'vinePullLeft' : 'vinePullRight')+
+          ' 1.15s cubic-bezier(.65,0,.95,.35) forwards';
       });
-    },4000);
+    },3000);
 
     setTimeout(()=>{
       flash.style.animation='bindFlash .38s ease-out forwards';
-    },5150);
+    },4300);
 
     setTimeout(()=>{
       scene.classList.remove('active');
@@ -2924,27 +2939,26 @@ function bindRansom(){
         vine.style.animation='';
       });
       intro();
-    },5550);
+    },4700);
 
     return;
   }
 
-  /* Classic binding timing remains unchanged. */
+  /* Classic: chains hold Ransom, then everything is pulled downward at 3 seconds. */
   setTimeout(()=>{
-    ransom.style.animation='ransomLift .28s ease-out forwards';
-  },1150);
-
-  setTimeout(()=>{
+    chains.forEach((chain,index)=>{
+      const pullName=index===1 || index===3 ? 'chainPullRight' : 'chainPullLeft';
+      chain.style.animation=pullName+' 1.15s cubic-bezier(.65,0,.95,.35) forwards';
+    });
     ransom.style.animation=
       'ransomPullDown 1.15s cubic-bezier(.65,0,.95,.35) forwards';
     seal.style.animation=
       'sealPullDown 1.15s ease-in forwards';
-    chains.forEach(chain=>chain.style.opacity='0');
-  },1450);
+  },3000);
 
   setTimeout(()=>{
     flash.style.animation='bindFlash .38s ease-out forwards';
-  },2300);
+  },4300);
 
   setTimeout(()=>{
     scene.classList.remove('active');
@@ -2964,9 +2978,8 @@ function bindRansom(){
       vine.style.animation='';
     });
     intro();
-  },2850);
+  },4700);
 }
-
 function showBadge(){
 
   const b=
