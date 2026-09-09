@@ -281,86 +281,95 @@ button:active{transform:scale(.97)}
   filter:drop-shadow(0 0 7px #ff2020) drop-shadow(0 0 15px #ff2020);
 }
 
-/* Classic chains: all restraints terminate directly at Ransom's sides. */
+/* Classic chains: hang DOWN from Ransom into the binding sigil, matching the reference animation. */
 .bindChain{
   position:absolute;
-  width:145px;
-  height:10px;
-  background:repeating-linear-gradient(90deg,#fff36a 0px,#ffd000 10px,#fff36a 20px,#d89d00 30px);
-  border:2px solid #ffe94a;
+  width:13px;
+  height:150px;
+  background:
+    repeating-linear-gradient(
+      180deg,
+      transparent 0 5px,
+      #ffe84a 5px 8px,
+      transparent 8px 13px
+    );
+  border:0;
   border-radius:8px;
   z-index:4;
   opacity:0;
-  box-shadow:0 0 8px #ffd000,0 0 18px #ffb700;
+  box-shadow:0 0 6px #ffd000,0 0 13px #ffb700;
+  transform-origin:top center;
 }
 
+/* Small linked-looking rings along each chain. */
+.bindChain::before,
 .bindChain::after{
   content:"";
   position:absolute;
-  right:-9px;
-  top:50%;
-  width:17px;
-  height:17px;
+  left:50%;
+  width:13px;
+  height:13px;
   border:3px solid #ffd000;
   border-radius:50%;
-  transform:translateY(-50%);
-  background:#8c6500;
-  box-shadow:0 0 8px #ffd000;
+  background:transparent;
+  box-shadow:0 0 6px #ffd000;
+  transform:translateX(-50%);
 }
+.bindChain::before{top:17px}
+.bindChain::after{bottom:17px}
 
-/* Two restraints on each side, with their inner ends touching Ransom. */
+/* Two chains on each side. Their TOP ends touch Ransom; their lower ends fall toward the sigil. */
 .bindChain.top{
-  left:calc(50% - 260px);
-  top:calc(50% - 54px);
-  transform:translateY(-50%) scaleX(0);
-  transform-origin:right center;
+  left:calc(50% - 82px);
+  top:calc(50% - 18px);
+  transform:rotate(-13deg) scaleY(0);
+  transform-origin:top center;
 }
 
 .bindChain.bottom{
-  left:calc(50% - 260px);
-  top:calc(50% + 54px);
-  transform:translateY(-50%) scaleX(0);
-  transform-origin:right center;
+  left:calc(50% - 52px);
+  top:calc(50% + 2px);
+  transform:rotate(-8deg) scaleY(0);
+  transform-origin:top center;
 }
 
 .bindChain.left{
-  left:calc(50% + 115px);
-  top:calc(50% - 54px);
-  transform:translateY(-50%) rotate(180deg) scaleX(0);
-  transform-origin:left center;
+  left:calc(50% + 39px);
+  top:calc(50% + 2px);
+  transform:rotate(8deg) scaleY(0);
+  transform-origin:top center;
 }
 
 .bindChain.right{
-  left:calc(50% + 115px);
-  top:calc(50% + 54px);
-  transform:translateY(-50%) rotate(180deg) scaleX(0);
-  transform-origin:left center;
+  left:calc(50% + 69px);
+  top:calc(50% - 18px);
+  transform:rotate(13deg) scaleY(0);
+  transform-origin:top center;
 }
 
-/* Overgrown vines: their inner ends also touch Ransom's sides. */
+/* Overgrown vines use the same downward restraint layout, but remain organic vine art. */
 .bindVine{
   position:absolute;
-  width:185px;
-  height:64px;
+  width:125px;
+  height:170px;
   object-fit:contain;
   z-index:4;
   opacity:0;
   pointer-events:none;
   filter:drop-shadow(0 0 4px #5fba3a) drop-shadow(0 0 10px #2f7d22);
+  transform-origin:top center;
 }
 
 .bindVine.left{
-  left:calc(50% - 300px);
-  top:calc(50% - 34px);
-  transform:translateY(-50%) scaleX(0);
-  transform-origin:right center;
+  left:calc(50% - 116px);
+  top:calc(50% - 12px);
+  transform:rotate(-13deg) scaleY(0);
 }
 
 .bindVine.right{
-  left:calc(50% + 115px);
-  top:calc(50% - 34px);
-  transform:translateY(-50%) rotateY(180deg) scaleX(0);
-  transform-origin:left center;
+  left:calc(50% - 9px);
+  top:calc(50% - 12px);
+  transform:rotate(13deg) scaleY(0);
 }
 
 #bindFlash{
@@ -398,59 +407,52 @@ button:active{transform:scale(.97)}
 }
 
 @keyframes chainLeft{
-  0%{opacity:0;transform:translateY(-50%) scaleX(0)}
+  0%{opacity:0;transform:rotate(-13deg) scaleY(0)}
   20%{opacity:1}
-  100%{opacity:1;transform:translateY(-50%) scaleX(1)}
+  100%{opacity:1;transform:rotate(-13deg) scaleY(1)}
 }
-
 @keyframes chainRight{
-  0%{opacity:0;transform:translateY(-50%) rotate(180deg) scaleX(0)}
+  0%{opacity:0;transform:rotate(8deg) scaleY(0)}
   20%{opacity:1}
-  100%{opacity:1;transform:translateY(-50%) rotate(180deg) scaleX(1)}
+  100%{opacity:1;transform:rotate(8deg) scaleY(1)}
 }
-
 @keyframes chainTop{
-  0%{opacity:0;transform:translateY(-50%) scaleX(0)}
+  0%{opacity:0;transform:rotate(-13deg) scaleY(0)}
   20%{opacity:1}
-  100%{opacity:1;transform:translateY(-50%) scaleX(1)}
+  100%{opacity:1;transform:rotate(-13deg) scaleY(1)}
 }
-
 @keyframes chainBottom{
-  0%{opacity:0;transform:translateY(-50%) rotate(180deg) scaleX(0)}
+  0%{opacity:0;transform:rotate(13deg) scaleY(0)}
   20%{opacity:1}
-  100%{opacity:1;transform:translateY(-50%) rotate(180deg) scaleX(1)}
+  100%{opacity:1;transform:rotate(13deg) scaleY(1)}
 }
 
 @keyframes vineLeft{
-  0%{opacity:0;transform:translateY(-50%) scaleX(0)}
+  0%{opacity:0;transform:rotate(-13deg) scaleY(0)}
   15%{opacity:1}
-  100%{opacity:1;transform:translateY(-50%) scaleX(1)}
+  100%{opacity:1;transform:rotate(-13deg) scaleY(1)}
 }
-
 @keyframes vineRight{
-  0%{opacity:0;transform:translateY(-50%) rotateY(180deg) scaleX(0)}
+  0%{opacity:0;transform:rotate(13deg) scaleY(0)}
   15%{opacity:1}
-  100%{opacity:1;transform:translateY(-50%) rotateY(180deg) scaleX(1)}
+  100%{opacity:1;transform:rotate(13deg) scaleY(1)}
 }
 
 @keyframes chainPullLeft{
-  from{transform:translateY(-50%) scaleX(1);opacity:1}
-  to{transform:translateY(120vh) scaleX(1);opacity:.9}
+  from{transform:translateY(0) rotate(-13deg) scaleY(1);opacity:1}
+  to{transform:translateY(120vh) rotate(-13deg) scaleY(1);opacity:.9}
 }
-
 @keyframes chainPullRight{
-  from{transform:translateY(-50%) rotate(180deg) scaleX(1);opacity:1}
-  to{transform:translateY(120vh) rotate(180deg) scaleX(1);opacity:.9}
+  from{transform:translateY(0) rotate(8deg) scaleY(1);opacity:1}
+  to{transform:translateY(120vh) rotate(8deg) scaleY(1);opacity:.9}
 }
-
 @keyframes vinePullLeft{
-  from{transform:translateY(-50%) scaleX(1);opacity:1}
-  to{transform:translateY(120vh) scaleX(1);opacity:.9}
+  from{transform:translateY(0) rotate(-13deg) scaleY(1);opacity:1}
+  to{transform:translateY(120vh) rotate(-13deg) scaleY(1);opacity:.9}
 }
-
 @keyframes vinePullRight{
-  from{transform:translateY(-50%) rotateY(180deg) scaleX(1);opacity:1}
-  to{transform:translateY(120vh) rotateY(180deg) scaleX(1);opacity:.9}
+  from{transform:translateY(0) rotate(13deg) scaleY(1);opacity:1}
+  to{transform:translateY(120vh) rotate(13deg) scaleY(1);opacity:.9}
 }
 
 @keyframes ransomLift{
@@ -2799,7 +2801,7 @@ function useCrucifix(){
   const roll=
     Math.random();
 
-  if(roll<0.5){
+  if(roll<0.75){
 
     bindRansom();
 
@@ -3965,17 +3967,23 @@ function updatePopupStage(now){
 
   /*
    * RISER:
-   * Fires at exactly 80 seconds elapsed,
-   * which is 10 seconds remaining.
+   * At 10 seconds remaining, cut the ransom music
+   * immediately and replace it with the jumpscare riser.
    */
+
+  const ransomTimeLeft=
+    Math.max(0,90000-e);
 
   if(
     !riserPlayed &&
-    e>=80000 &&
-    e<90000
+    ransomTimeLeft<=10000 &&
+    ransomTimeLeft>0
   ){
 
     riserPlayed=true;
+
+    stopAudio();
+    stopMusic();
 
     playAudio(
       'ransom_attack_audio.mp3',
