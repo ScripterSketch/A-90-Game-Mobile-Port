@@ -372,6 +372,29 @@ button:active{transform:scale(.97)}
   transform:rotate(13deg) scaleY(0);
 }
 
+#classicBindVideo{
+  position:absolute;
+  width:520px;
+  height:520px;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  opacity:0;
+  pointer-events:none;
+}
+
+#classicBindCanvas{
+  position:absolute;
+  width:520px;
+  height:520px;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  z-index:8;
+  display:none;
+  pointer-events:none;
+}
+
 #bindFlash{
   position:absolute;
   inset:0;
@@ -870,6 +893,14 @@ button:active{transform:scale(.97)}
       src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/ransom_idle.png?v=2"
     >
 
+    <video id="classicBindVideo"
+           playsinline
+           preload="auto"
+           muted>
+      <source src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/repent.mov?v=2" type="video/quicktime">
+    </video>
+    <canvas id="classicBindCanvas" width="520" height="520"></canvas>
+
     <div id="bindFlash"></div>
 
   </div>
@@ -1046,6 +1077,12 @@ let audioType='';
 
 let menuMusic=null;
 let shopMusic=null;
+let classicBindVideo=null;
+let classicBindCanvas=null;
+let classicBindCanvasCtx=null;
+let classicBindFrame=null;
+let classicBindAudio=null;
+let classicBindRunId=0;
 
 let musicFadeFrame=null;
 
@@ -2889,6 +2926,150 @@ function useCrucifix(){
 
 }
 
+function stopClassicBindMedia(){
+
+  classicBindRunId++;
+
+  if(classicBindFrame){
+    cancelAnimationFrame(classicBindFrame);
+    classicBindFrame=null;
+  }
+
+  if(classicBindVideo){
+    classicBindVideo.pause();
+    try{ classicBindVideo.currentTime=0; }catch(e){}
+  }
+
+  if(classicBindAudio){
+    classicBindAudio.pause();
+    try{ classicBindAudio.currentTime=0; }catch(e){}
+    classicBindAudio=null;
+  }
+
+  if(classicBindCanvasCtx && classicBindCanvas){
+    classicBindCanvasCtx.clearRect(
+      0,0,classicBindCanvas.width,classicBindCanvas.height
+    );
+  }
+
+  if(classicBindCanvas){
+    classicBindCanvas.style.display='none';
+  }
+}
+
+function startClassicBindVideo(onDone){
+
+  classicBindVideo=$('classicBindVideo');
+  classicBindCanvas=$('classicBindCanvas');
+
+  if(!classicBindVideo || !classicBindCanvas){
+    if(onDone) onDone();
+    return;
+  }
+
+  classicBindCanvasCtx=classicBindCanvas.getContext('2d',{
+    willReadFrequently:true
+  });
+
+  const runId=++classicBindRunId;
+  const w=classicBindCanvas.width;
+  const h=classicBindCanvas.height;
+
+  classicBindCanvas.style.display='block';
+  classicBindCanvas.style.opacity='1';
+
+  const draw=()=>{
+
+    if(runId!==classicBindRunId || !classicBindVideo ||
+       classicBindVideo.paused && classicBindVideo.ended){
+      return;
+    }
+
+    classicBindCanvasCtx.clearRect(0,0,w,h);
+    classicBindCanvasCtx.drawImage(classicBindVideo,0,0,w,h);
+
+    const img=classicBindCanvasCtx.getImageData(0,0,w,h);
+    const data=img.data;
+    const visited=new Uint8Array(w*h);
+    const stack=new Int32Array(w*h);
+    let sp=0;
+
+    function isWhiteBackground(i){
+      const r=data[i], g=data[i+1], b=data[i+2];
+      const max=Math.max(r,g,b);
+      const min=Math.min(r,g,b);
+      return min>=238 && (max-min)<=20;
+    }
+
+    function pushIfBackground(x,y){
+      const p=y*w+x;
+      if(visited[p]) return;
+      const i=p*4;
+      if(!isWhiteBackground(i)) return;
+      visited[p]=1;
+      stack[sp++]=p;
+    }
+
+    for(let x=0;x<w;x++){
+      pushIfBackground(x,0);
+      pushIfBackground(x,h-1);
+    }
+    for(let y=1;y<h-1;y++){
+      pushIfBackground(0,y);
+      pushIfBackground(w-1,y);
+    }
+
+    while(sp>0){
+      const p=stack[--sp];
+      const i=p*4;
+      data[i+3]=0;
+      const x=p%w;
+      const y=(p-x)/w;
+      if(x>0) pushIfBackground(x-1,y);
+      if(x<w-1) pushIfBackground(x+1,y);
+      if(y>0) pushIfBackground(x,y-1);
+      if(y<h-1) pushIfBackground(x,y+1);
+    }
+
+    classicBindCanvasCtx.putImageData(img,0,0);
+
+    if(runId===classicBindRunId){
+      classicBindFrame=requestAnimationFrame(draw);
+    }
+  };
+
+  classicBindVideo.onended=()=>{
+    if(runId!==classicBindRunId) return;
+    stopClassicBindMedia();
+    if(onDone) onDone();
+  };
+
+  classicBindVideo.currentTime=0;
+  classicBindVideo.muted=true;
+  classicBindVideo.playsInline=true;
+
+  const playPromise=classicBindVideo.play();
+  if(playPromise && playPromise.catch){
+    playPromise.catch(()=>{
+      if(runId===classicBindRunId && onDone) onDone();
+    });
+  }
+
+  classicBindFrame=requestAnimationFrame(draw);
+
+  /* Play the new Crucifix track alongside A-90's existing scream. */
+  classicBindAudio=new Audio(
+    assets+'crucifix.mp3?v=2'
+  );
+  classicBindAudio.preload='auto';
+  classicBindAudio.volume=SETTINGS.sfxVolume/100;
+  classicBindAudio.playsInline=true;
+  const audioPromise=classicBindAudio.play();
+  if(audioPromise && audioPromise.catch){
+    audioPromise.catch(()=>{});
+  }
+}
+
 function bindRansom(){
 
   stage=0;
@@ -2909,6 +3090,7 @@ function bindRansom(){
   const chains=scene ? scene.querySelectorAll('.bindChain') : [];
   const vines=scene ? scene.querySelectorAll('.bindVine') : [];
   const flash=$('bindFlash');
+  stopClassicBindMedia();
 
   if(!scene || !ransom || !seal || !grassSigil || !flash){
     intro();
@@ -3036,41 +3218,34 @@ function bindRansom(){
     return;
   }
 
-  /* Classic: chains hold Ransom, then everything is pulled downward at 3 seconds. */
-  setTimeout(()=>{
-    chains.forEach((chain,index)=>{
-      const pullName=index===1 || index===3 ? 'chainPullRight' : 'chainPullLeft';
-      chain.style.animation=pullName+' 1.15s cubic-bezier(.65,0,.95,.35) forwards';
-    });
-    ransom.style.animation=
-      'ransomPullDown 1.15s cubic-bezier(.65,0,.95,.35) forwards';
-    seal.style.animation=
-      'sealPullDown 1.15s ease-in forwards';
-  },3000);
+  /* Classic Crucifix now uses the authored repent.mov animation. */
+  chains.forEach(chain=>{
+    chain.style.opacity='0';
+    chain.style.animation='none';
+  });
+  seal.style.opacity='0';
+  seal.style.animation='none';
+  grassSigil.style.opacity='0';
+  grassSigil.style.animation='none';
+  ransom.style.opacity='0';
+  ransom.style.animation='none';
 
-  setTimeout(()=>{
-    flash.style.animation='bindFlash .38s ease-out forwards';
-  },4300);
+  /* Keep A-90's Crucifix scream and add the supplied Crucifix track at the same time. */
+  playAudio('ransom_crucifix.mp3',false,'sfx');
 
-  setTimeout(()=>{
-    scene.classList.remove('active');
-    ransom.style.animation='none';
-    ransom.src=assets+'ransom_idle.png?v=2';
-    seal.style.animation='none';
-    grassSigil.style.animation='none';
-    grassSigil.style.opacity='0';
-    flash.style.animation='none';
-    flash.style.opacity='0';
-    chains.forEach(chain=>{
-      chain.style.opacity='0';
-      chain.style.animation='';
-    });
-    vines.forEach(vine=>{
-      vine.style.opacity='0';
-      vine.style.animation='';
-    });
+  startClassicBindVideo(()=>{
+    const currentScene=$('crucifixBindScene');
+    if(currentScene) currentScene.classList.remove('active');
+    const currentRansom=$('bindRansom');
+    if(currentRansom){
+      currentRansom.style.opacity='1';
+      currentRansom.style.animation='none';
+      currentRansom.src=assets+'ransom_idle.png?v=2';
+    }
     intro();
-  },4700);
+  });
+
+  return;
 }
 function showBadge(){
 
@@ -3094,6 +3269,8 @@ function showBadge(){
 }
 
 function clearGameObjects(){
+
+  stopClassicBindMedia();
 
   /*
    * Crucifix binding scene cleanup.
