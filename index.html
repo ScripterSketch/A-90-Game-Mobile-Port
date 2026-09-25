@@ -18,13 +18,10 @@ button:active{transform:scale(.97)}
 .screen{position:absolute;inset:0;display:none;align-items:center;justify-content:center}
 .screen.active{display:flex}
 
-/* INTRO / MENU */
+/* MAIN MENU */
 #intro{background:#000;flex-direction:column}
-.credit{position:absolute;top:12%;width:100%;text-align:center;font-weight:700}
-.credit .by{font-size:clamp(18px,4vw,32px)}
-.credit .name{font-size:clamp(26px,6vw,48px)}
-.credit .ninety{font-size:clamp(80px,18vw,150px);line-height:.8}
-#menu{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);display:none;gap:10px;flex-direction:column;width:min(340px,76vw)}
+#menu{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);display:flex;gap:10px;flex-direction:column;width:min(340px,76vw)}
+.menuWatermark{position:absolute;right:10px;bottom:8px;font-size:10px;font-weight:700;letter-spacing:.3px;opacity:.25;pointer-events:none;user-select:none}
 #menu button{border-color:#b00000;background:#050505}
 .menuCurrencies{display:flex;justify-content:center;gap:10px;margin-bottom:4px}
 .currency{border:1px solid #555;background:#090909;padding:7px 11px;border-radius:4px;font-size:14px;font-weight:700}
@@ -318,6 +315,23 @@ button:active{transform:scale(.97)}
 .bindChain::before{top:17px}
 .bindChain::after{bottom:17px}
 
+/* Failed Crucifix: chains flash red when the binding breaks. */
+.bindChain.failRed{
+  background:
+    repeating-linear-gradient(
+      180deg,
+      transparent 0 5px,
+      #ff3b3b 5px 8px,
+      transparent 8px 13px
+    );
+  box-shadow:0 0 6px #ff2020,0 0 13px #ff0000;
+}
+.bindChain.failRed::before,
+.bindChain.failRed::after{
+  border-color:#ff2020;
+  box-shadow:0 0 6px #ff2020;
+}
+
 /* Two chains on each side. Their TOP ends touch Ransom; their lower ends fall toward the sigil. */
 .bindChain.top{
   left:calc(50% - 82px);
@@ -370,6 +384,63 @@ button:active{transform:scale(.97)}
   left:calc(50% - 9px);
   top:calc(50% - 12px);
   transform:rotate(13deg) scaleY(0);
+}
+
+#classicBindImage{
+  position:absolute;
+  width:520px;
+  height:520px;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  object-fit:contain;
+  opacity:0;
+  display:none;
+  pointer-events:none;
+  z-index:8;
+}
+
+#classicFailMask{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:300px;
+  height:390px;
+  transform:translate(-50%,-50%);
+  background:#fff;
+  border-radius:110px;
+  opacity:0;
+  display:none;
+  pointer-events:none;
+  z-index:2;
+}
+
+@keyframes failRansomLift{
+  0%{transform:translate(-50%,-50%) scale(.7);opacity:0}
+  45%{transform:translate(-50%,-50%) scale(1);opacity:1}
+  100%{transform:translate(-50%,calc(-50% - 135px)) scale(1);opacity:1}
+}
+
+@keyframes failMaskLift{
+  0%{transform:translate(-50%,-50%) scale(.7);opacity:1}
+  45%{transform:translate(-50%,-50%) scale(1);opacity:1}
+  100%{transform:translate(-50%,calc(-50% - 135px)) scale(1);opacity:1}
+}
+
+@keyframes failRansomBreak{
+  0%{transform:translate(-50%,calc(-50% - 135px)) scale(1);opacity:1}
+  100%{transform:translate(-50%,calc(-50% - 85px)) scale(1);opacity:1}
+}
+
+@keyframes failChainBreakLeft{
+  0%{transform:rotate(-13deg) scaleY(1);opacity:1}
+  55%{transform:rotate(-22deg) scaleY(.75) translate(-14px,-5px);opacity:1}
+  100%{transform:rotate(-38deg) scaleY(.15) translate(-55px,-30px);opacity:0}
+}
+@keyframes failChainBreakRight{
+  0%{transform:rotate(8deg) scaleY(1);opacity:1}
+  55%{transform:rotate(18deg) scaleY(.75) translate(14px,-5px);opacity:1}
+  100%{transform:rotate(35deg) scaleY(.15) translate(55px,-30px);opacity:0}
 }
 
 #classicBindVideo{
@@ -797,12 +868,6 @@ button:active{transform:scale(.97)}
 <div id="app">
 
 <div id="intro" class="screen active">
-  <div class="credit" id="credits">
-    <div class="by">By</div>
-    <div class="name" style="display:none">Majed</div>
-    <div class="ninety" style="display:none">90</div>
-  </div>
-
   <div id="menu">
     <div class="menuCurrencies">
       <div class="currency">💰 RP: <span id="rpDisplay">0</span></div>
@@ -815,6 +880,7 @@ button:active{transform:scale(.97)}
     <button id="settings">SETTINGS</button>
     <button id="exit">EXIT</button>
   </div>
+  <div class="menuWatermark">ScripterSketch</div>
 </div>
 
 <div id="warning" class="screen">
@@ -893,13 +959,15 @@ button:active{transform:scale(.97)}
       src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/ransom_idle.png?v=2"
     >
 
-    <video id="classicBindVideo"
-           playsinline
-           preload="auto"
-           muted>
-      <source src="https://scriptersketch.github.io/A-90-Game-Mobile-Port/repent.mov?v=2" type="video/quicktime">
-    </video>
-    <canvas id="classicBindCanvas" width="520" height="520"></canvas>
+    <img id="classicBindImage"
+         alt=""
+         draggable="false">
+
+    <div id="classicFailMask"></div>
+
+    <!-- Legacy elements retained but never frame-processed. -->
+    <video id="classicBindVideo" playsinline preload="none" muted></video>
+    <canvas id="classicBindCanvas" width="1" height="1"></canvas>
 
     <div id="bindFlash"></div>
 
@@ -1078,11 +1146,14 @@ let audioType='';
 let menuMusic=null;
 let shopMusic=null;
 let classicBindVideo=null;
+let classicBindImage=null;
 let classicBindCanvas=null;
 let classicBindCanvasCtx=null;
 let classicBindFrame=null;
 let classicBindAudio=null;
 let classicBindRunId=0;
+let classicFailMode=false;
+let classicFailTimer=null;
 
 let musicFadeFrame=null;
 
@@ -1093,7 +1164,7 @@ let activity=false;
 let paid=false;
 
 let balance=500;
-let remaining=90;
+let remaining=124;
 
 let riserPlayed=false;
 let coinsCollected=0;
@@ -1116,6 +1187,8 @@ let miniNodes=[];
 let miniStart=0;
 let miniNextMove=0;
 let miniFound=0;
+let recoveryCrash=false;
+let recoveryCrashTriggered=false;
 
 let jumpscareEnding=false;
 let jumpscareSoundCount=0;
@@ -1645,64 +1718,11 @@ function intro(){
   stopMusic();
 
   stage=0;
-
   show('intro');
 
-  $('menu').style.display='none';
-
-  const credit=
-    $('credits');
-
-  const by=
-    credit.querySelector('.by');
-
-  const name=
-    credit.querySelector('.name');
-
-  const ninety=
-    credit.querySelector('.ninety');
-
-  credit.style.display='block';
-
-  by.style.display='none';
-  name.style.display='none';
-  ninety.style.display='none';
-
-  setTimeout(
-    ()=>{
-      by.style.display='block';
-    },
-    0
-  );
-
-  setTimeout(
-    ()=>{
-      name.style.display='block';
-    },
-    3700
-  );
-
-  setTimeout(
-    ()=>{
-      ninety.style.display='block';
-    },
-    7400
-  );
-
-  setTimeout(
-    ()=>{
-
-      credit.style.display='none';
-
-      $('menu').style.display='flex';
-
-      refreshCurrency();
-
-      playMenuMusic();
-
-    },
-    10400
-  );
+  $('menu').style.display='flex';
+  refreshCurrency();
+  playMenuMusic();
 
 }
 
@@ -2918,10 +2938,36 @@ function useCrucifix(){
 
   }else{
 
-    toast(
-      'The Crucifix failed to bind Ransom.'
-    );
+    /* Failed Crucifix: keep the current ransom encounter alive. */
+    stage=6;
+    stopAudio();
+    stopMusic();
+    clearTimeout(classicFailTimer);
+    classicFailTimer=null;
 
+    const scene=$('crucifixBindScene');
+    const ransom=$('bindRansom');
+    const seal=scene ? scene.querySelector('.bindSeal') : null;
+    const grassSigil=$('bindGrassSigil');
+    const flash=$('bindFlash');
+    const chains=scene ? scene.querySelectorAll('.bindChain') : [];
+    const vines=scene ? scene.querySelectorAll('.bindVine') : [];
+
+    if(scene){ scene.classList.add('active'); }
+    if(ransom){
+      ransom.style.opacity='1';
+      ransom.style.display='block';
+      ransom.style.animation='none';
+      ransom.src=assets+'ransom_crucifix.png?v=2';
+    }
+    if(seal) seal.style.opacity='0';
+    if(grassSigil) grassSigil.style.opacity='0';
+    if(flash) flash.style.opacity='0';
+    chains.forEach(c=>{ c.style.opacity='0'; c.style.animation='none'; });
+    vines.forEach(v=>{ v.style.opacity='0'; v.style.animation='none'; });
+
+    /* Use the dedicated failed animation and fail audio. */
+    startClassicFailVideo();
   }
 
 }
@@ -2929,6 +2975,8 @@ function useCrucifix(){
 function stopClassicBindMedia(){
 
   classicBindRunId++;
+  classicFailMode=false;
+  if(classicFailTimer){ clearTimeout(classicFailTimer); classicFailTimer=null; }
 
   if(classicBindFrame){
     cancelAnimationFrame(classicBindFrame);
@@ -2937,7 +2985,14 @@ function stopClassicBindMedia(){
 
   if(classicBindVideo){
     classicBindVideo.pause();
-    try{ classicBindVideo.currentTime=0; }catch(e){}
+    classicBindVideo.removeAttribute('src');
+    classicBindVideo.innerHTML='';
+  }
+
+  if(classicBindImage){
+    classicBindImage.style.display='none';
+    classicBindImage.style.opacity='0';
+    classicBindImage.removeAttribute('src');
   }
 
   if(classicBindAudio){
@@ -2959,108 +3014,44 @@ function stopClassicBindMedia(){
 
 function startClassicBindVideo(onDone){
 
-  classicBindVideo=$('classicBindVideo');
-  classicBindCanvas=$('classicBindCanvas');
+  /*
+   * Use the pre-rendered transparent animation instead of processing every
+   * MOV frame through canvas.  This avoids getImageData()/putImageData()
+   * on iPad Safari and lets the browser handle animation compositing.
+   */
+  classicBindImage=$('classicBindImage');
 
-  if(!classicBindVideo || !classicBindCanvas){
+  if(!classicBindImage){
     if(onDone) onDone();
     return;
   }
 
-  classicBindCanvasCtx=classicBindCanvas.getContext('2d',{
-    willReadFrequently:true
-  });
-
   const runId=++classicBindRunId;
-  const w=classicBindCanvas.width;
-  const h=classicBindCanvas.height;
+  let finished=false;
+  let doneTimer=null;
 
-  classicBindCanvas.style.display='block';
-  classicBindCanvas.style.opacity='1';
-
-  const draw=()=>{
-
-    if(runId!==classicBindRunId || !classicBindVideo ||
-       classicBindVideo.paused && classicBindVideo.ended){
-      return;
-    }
-
-    classicBindCanvasCtx.clearRect(0,0,w,h);
-    classicBindCanvasCtx.drawImage(classicBindVideo,0,0,w,h);
-
-    const img=classicBindCanvasCtx.getImageData(0,0,w,h);
-    const data=img.data;
-    const visited=new Uint8Array(w*h);
-    const stack=new Int32Array(w*h);
-    let sp=0;
-
-    function isWhiteBackground(i){
-      const r=data[i], g=data[i+1], b=data[i+2];
-      const max=Math.max(r,g,b);
-      const min=Math.min(r,g,b);
-      return min>=238 && (max-min)<=20;
-    }
-
-    function pushIfBackground(x,y){
-      const p=y*w+x;
-      if(visited[p]) return;
-      const i=p*4;
-      if(!isWhiteBackground(i)) return;
-      visited[p]=1;
-      stack[sp++]=p;
-    }
-
-    for(let x=0;x<w;x++){
-      pushIfBackground(x,0);
-      pushIfBackground(x,h-1);
-    }
-    for(let y=1;y<h-1;y++){
-      pushIfBackground(0,y);
-      pushIfBackground(w-1,y);
-    }
-
-    while(sp>0){
-      const p=stack[--sp];
-      const i=p*4;
-      data[i+3]=0;
-      const x=p%w;
-      const y=(p-x)/w;
-      if(x>0) pushIfBackground(x-1,y);
-      if(x<w-1) pushIfBackground(x+1,y);
-      if(y>0) pushIfBackground(x,y-1);
-      if(y<h-1) pushIfBackground(x,y+1);
-    }
-
-    classicBindCanvasCtx.putImageData(img,0,0);
-
-    if(runId===classicBindRunId){
-      classicBindFrame=requestAnimationFrame(draw);
-    }
-  };
-
-  classicBindVideo.onended=()=>{
-    if(runId!==classicBindRunId) return;
+  const finish=()=>{
+    if(finished || runId!==classicBindRunId) return;
+    finished=true;
+    if(doneTimer) clearTimeout(doneTimer);
     stopClassicBindMedia();
     if(onDone) onDone();
   };
 
-  classicBindVideo.currentTime=0;
-  classicBindVideo.muted=true;
-  classicBindVideo.playsInline=true;
+  classicBindImage.style.display='block';
+  classicBindImage.style.opacity='1';
+  classicBindImage.src=assets+'repent_transparent_quality_full.webp?v=1';
 
-  const playPromise=classicBindVideo.play();
-  if(playPromise && playPromise.catch){
-    playPromise.catch(()=>{
-      if(runId===classicBindRunId && onDone) onDone();
-    });
-  }
+  classicBindImage.onerror=()=>{
+    if(runId!==classicBindRunId) return;
+    finish();
+  };
 
-  classicBindFrame=requestAnimationFrame(draw);
+  /* repent.mov is 13.72 seconds; leave a tiny safety margin. */
+  doneTimer=setTimeout(finish,13750);
 
-  /* Play the new Crucifix track alongside A-90's existing scream. */
-  classicBindAudio=new Audio(
-    assets+'crucifix.mp3?v=2'
-  );
+  /* New Crucifix audio plays alongside A-90's existing scream. */
+  classicBindAudio=new Audio(assets+'crucifix.mp3?v=3');
   classicBindAudio.preload='auto';
   classicBindAudio.volume=SETTINGS.sfxVolume/100;
   classicBindAudio.playsInline=true;
@@ -3068,6 +3059,144 @@ function startClassicBindVideo(onDone){
   if(audioPromise && audioPromise.catch){
     audioPromise.catch(()=>{});
   }
+}
+
+function startClassicFailVideo(){
+
+  classicFailMode=true;
+
+  const scene=$('crucifixBindScene');
+  const ransom=$('bindRansom');
+  const video=$('classicBindVideo');
+  const mask=$('classicFailMask');
+  const chains=scene ? scene.querySelectorAll('.bindChain') : [];
+
+  if(!scene || !ransom || !video || !mask){
+    resumeRansomAfterCrucifixFail();
+    return;
+  }
+
+  scene.classList.add('active');
+
+  /* Start with Ransom's Crucifix scream and raise him exactly like the
+   * successful bind. The fail sound takes over when he realizes it isn't working. */
+  ransom.style.display='block';
+  ransom.style.opacity='1';
+  ransom.style.zIndex='3';
+  ransom.src=assets+'ransom_crucifix.png?v=2';
+  ransom.style.animation='failRansomLift 2.56s cubic-bezier(.2,.8,.25,1) forwards';
+  playAudio('ransom_crucifix.mp3',false,'sfx');
+
+  /* The mask hides the character baked into the authored video so the actual
+   * Ransom PNG remains the visible character. */
+  mask.style.display='block';
+  mask.style.opacity='1';
+  mask.style.animation='failMaskLift 2.56s cubic-bezier(.2,.8,.25,1) forwards';
+
+  /* The authored fail movie contains the cyan raise, then the red failure and
+   * chain break. It is deliberately allowed to finish instead of continuing
+   * into the original downward pull. */
+  video.style.display='block';
+  video.style.opacity='1';
+  video.style.zIndex='1';
+  video.style.mixBlendMode='multiply';
+  video.style.filter='none';
+  video.src=assets+'repentfail.mov?v=2';
+  video.currentTime=0;
+  video.loop=false;
+
+  const runId=classicBindRunId;
+
+  const triggerFail=()=>{
+    if(!classicFailMode || runId!==classicBindRunId) return;
+
+    /* Ransom realizes the Crucifix isn't working: normal face + scream stops. */
+    stopAudio();
+    ransom.src=assets+'ransom_idle.png?v=2';
+    ransom.style.animation='failRansomLift 2.56s cubic-bezier(.2,.8,.25,1) forwards';
+
+    /* The dedicated fail sound begins at the exact face-change/red-transition. */
+    playAudio('crucifixfail.mp3',false,'sfx');
+  };
+
+  classicFailTimer=setTimeout(triggerFail,2560);
+
+  video.onended=()=>{
+    if(!classicFailMode || runId!==classicBindRunId) return;
+    resumeRansomAfterCrucifixFail();
+  };
+
+  video.onerror=()=>{
+    if(runId!==classicBindRunId) return;
+    triggerFail();
+    setTimeout(()=>resumeRansomAfterCrucifixFail(),1000);
+  };
+
+  const promise=video.play();
+  if(promise && promise.catch) promise.catch(()=>{});
+}
+
+function resumeRansomAfterCrucifixFail(){
+
+  if(!classicFailMode && stage===6) return;
+
+  if(classicFailTimer){ clearTimeout(classicFailTimer); classicFailTimer=null; }
+
+  classicFailMode=false;
+
+  const scene=$('crucifixBindScene');
+  const ransom=$('bindRansom');
+  const mask=$('classicFailMask');
+  const video=$('classicBindVideo');
+
+  if(video){
+    video.pause();
+    video.removeAttribute('src');
+    video.style.display='none';
+    video.style.opacity='0';
+    video.style.filter='none';
+    video.style.mixBlendMode='normal';
+    video.style.zIndex='1';
+  }
+
+  if(mask){
+    mask.style.display='none';
+    mask.style.opacity='0';
+    mask.style.animation='none';
+    mask.style.zIndex='2';
+  }
+
+  if(scene) scene.classList.remove('active');
+
+  if(ransom){
+    ransom.style.animation='none';
+    ransom.style.opacity='1';
+    ransom.style.display='block';
+    ransom.src=assets+'ransom_idle.png?v=2';
+    ransom.style.zIndex='3';
+  }
+
+  document.querySelectorAll('.bindChain').forEach(chain=>{
+    chain.style.animation='';
+    chain.style.opacity='0';
+    chain.classList.remove('failRed');
+  });
+
+  /* Resume the exact same ransom encounter instead of resetting it. */
+  stage=6;
+  paid=false;
+  jumpscareEnding=false;
+  riserPlayed=false;
+
+  /* The original popup, coins, storm popups, balance, and timer were never
+   * destroyed during the failed Crucifix attempt, so simply reveal them again. */
+  $('popupLayer').style.display='block';
+
+  const balanceText=$('balanceText');
+  if(balanceText) balanceText.textContent=balance;
+
+  stopMusic();
+  playAudio('ransom_theme.mp3',true,'music');
 }
 
 function bindRansom(){
@@ -3230,9 +3359,7 @@ function bindRansom(){
   ransom.style.opacity='0';
   ransom.style.animation='none';
 
-  /* Keep A-90's Crucifix scream and add the supplied Crucifix track at the same time. */
-  playAudio('ransom_crucifix.mp3',false,'sfx');
-
+  /* A-90's scream was started above; the second track starts in startClassicBindVideo. */
   startClassicBindVideo(()=>{
     const currentScene=$('crucifixBindScene');
     if(currentScene) currentScene.classList.remove('active');
@@ -3442,7 +3569,7 @@ function startGame(){
   paid=false;
 
   balance=500;
-  remaining=90;
+  remaining=124;
 
   riserPlayed=false;
   coinsCollected=0;
@@ -3783,7 +3910,7 @@ function beginRansom(){
 
   balance=500;
 
-  remaining=90;
+  remaining=124;
 
   riserPlayed=false;
   coinsCollected=0;
@@ -3875,7 +4002,7 @@ function createMainPopup(){
       <div class="timebox">
 
         <span id="timer">
-          TIME: 01:30
+          TIME: 02:04
         </span>
 
       </div>
@@ -3896,7 +4023,7 @@ function createMainPopup(){
 
 }
 
-function spawnCoins(){
+function spawnCoins(count=18){
 
   const types=[
 
@@ -3908,7 +4035,7 @@ function spawnCoins(){
 
   for(
     let i=0;
-    i<18;
+    i<count;
     i++
   ){
 
@@ -4199,7 +4326,7 @@ function updatePopupStage(now){
   remaining=
     Math.max(
       0,
-      90-Math.ceil(e/1000)
+      124-Math.ceil(e/1000)
     );
 
   const sec=
@@ -4242,7 +4369,7 @@ function updatePopupStage(now){
    */
 
   const ransomTimeLeft=
-    Math.max(0,90000-e);
+    Math.max(0,124000-e);
 
   if(
     !riserPlayed &&
@@ -4270,7 +4397,7 @@ function updatePopupStage(now){
    */
 
   if(
-    e>=90000
+    e>=124000
   ){
 
     triggerRansomJumpscare();
@@ -4550,8 +4677,8 @@ function finishPaid(){
     stageStart;
 
   const paidAtLastSecond=
-    ransomElapsed>=89000 &&
-    ransomElapsed<90000;
+    ransomElapsed>=123000 &&
+    ransomElapsed<124000;
 
   paid=true;
   stage=0;
@@ -4610,6 +4737,9 @@ function finishPaid(){
 
 function startUnpaid(fromTimer=false){
 
+  recoveryCrash=false;
+  recoveryCrashTriggered=false;
+
   stage=7;
 
   questEvent(
@@ -4658,9 +4788,9 @@ function updateUnpaid(now){
       e/TIMINGS.fakeBSOD;
 
     const percent=
-      Math.floor(
-        p*100
-      );
+      recoveryCrash
+        ? Math.min(99,Math.floor(p*100))
+        : Math.floor(p*100);
 
     $('bsodfill').style.width=
       percent+'%';
@@ -4668,6 +4798,47 @@ function updateUnpaid(now){
     $('bsodPercent').textContent=
       percent+
       '% complete';
+
+    return;
+
+  }
+
+  if(recoveryCrash){
+
+    $('bsodfill').style.width='99%';
+    $('bsodPercent').textContent='99% complete';
+
+    if(!recoveryCrashTriggered){
+
+      recoveryCrashTriggered=true;
+
+      playAudio(
+        'unrecoverable.mp3',
+        false,
+        'sfx'
+      );
+
+      setTimeout(()=>{
+
+        // Best-effort close for a Home Screen web app/tab.
+        // Browsers may block programmatic tab closing, so the fallback
+        // leaves the app on a blank page instead of doing anything unsafe.
+        try{
+          window.open('','_self');
+          window.close();
+        }catch(e){}
+
+        setTimeout(()=>{
+
+          if(!document.hidden){
+            location.replace('about:blank');
+          }
+
+        },250);
+
+      },650);
+
+    }
 
     return;
 
@@ -4976,6 +5147,9 @@ function finishMini(){
 function failMini(){
 
   stage=7;
+
+  recoveryCrash=true;
+  recoveryCrashTriggered=false;
 
   stageStart=
     performance.now();
